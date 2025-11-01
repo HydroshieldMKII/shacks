@@ -84,7 +84,10 @@ export class FoldersController {
   @ApiResponse({ status: 400, description: 'Bad Request - Validation error' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Not your folder' })
-  @ApiResponse({ status: 404, description: 'Not Found - Folder does not exist' })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found - Folder does not exist',
+  })
   update(
     @Param('id') id: string,
     @Body() updateFolderDto: UpdateFolderDto,
@@ -97,8 +100,7 @@ export class FoldersController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Delete folder',
-    description:
-      'Delete folder and all associated passwords (CASCADE delete)',
+    description: 'Delete folder and all associated passwords (CASCADE delete)',
   })
   @ApiParam({
     name: 'id',
@@ -121,7 +123,10 @@ export class FoldersController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Not your folder' })
-  @ApiResponse({ status: 404, description: 'Not Found - Folder does not exist' })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found - Folder does not exist',
+  })
   remove(
     @Param('id') id: string,
     @CurrentUser() user: { id: number; username: string },

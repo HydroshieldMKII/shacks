@@ -200,7 +200,8 @@ export class PasswordsController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Update password entry',
-    description: 'Update password entry fields. Password will be re-encrypted if changed.',
+    description:
+      'Update password entry fields. Password will be re-encrypted if changed.',
   })
   @ApiParam({
     name: 'id',

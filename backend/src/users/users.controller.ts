@@ -45,7 +45,10 @@ export class UsersController {
       },
     },
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized - User not logged in' })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - User not logged in',
+  })
   getCurrentUser(@CurrentUser() user: { id: number; username: string }) {
     return user;
   }
