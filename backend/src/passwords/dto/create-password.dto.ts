@@ -1,4 +1,10 @@
-import { IsInt, IsString, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
+import {
+  IsInt,
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsUrl,
+} from 'class-validator';
 
 export class CreatePasswordDto {
   @IsInt()
