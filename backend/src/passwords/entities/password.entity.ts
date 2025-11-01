@@ -8,7 +8,7 @@ export class Password {
   @Column()
   userId: number;
 
-  @Column()
+  @Column({ nullable: true })
   folderId: number;
 
   @Column()
