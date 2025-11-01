@@ -50,6 +50,10 @@ export class GuardiansService {
     };
   }
 
+  async generateGuardianKey(): Promise<string> {
+    return Math.random().toString(36).substring(2, 15);
+  }
+
   async create(createGuardianDto: CreateGuardianDto, userId: number) {
     // Validate that the authenticated userId matches one of the users in the relationship
     if (
