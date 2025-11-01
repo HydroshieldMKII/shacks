@@ -25,7 +25,29 @@ export class GuardiansService {
       .orWhere('guardian.guardedUserId = :userId', { userId })
       .getMany();
 
-    return guardians;
+    // Split into two categories
+    const protecting = guardians
+      .filter((guardian) => guardian.userId === userId)
+      .map((guardian) => ({
+        id: guardian.id,
+        userId: guardian.userId,
+        guardedUserId: guardian.guardedUserId,
+        guardianKeyValue: guardian.guardianKeyValue, // Show key for people you protect
+      }));
+
+    const protectedBy = guardians
+      .filter((guardian) => guardian.guardedUserId === userId)
+      .map((guardian) => ({
+        id: guardian.id,
+        userId: guardian.userId,
+        guardedUserId: guardian.guardedUserId,
+        // Don't include guardianKeyValue for people protecting you
+      }));
+
+    return {
+      protecting: protecting, // Users that the current user is protecting (with keys)
+      protected: protectedBy, // Users that are protecting the current user (without keys)
+    };
   }
 
   async create(createGuardianDto: CreateGuardianDto, userId: number) {
@@ -39,10 +61,13 @@ export class GuardiansService {
       );
     }
 
-    // Validate that guardianKeyValue is provided
-    if (!createGuardianDto.guardianKeyValue) {
-      throw new BadRequestException('Guardian key value is required');
+    //Check if guarded is myself
+    if (createGuardianDto.userId === createGuardianDto.guardedUserId) {
+      throw new BadRequestException('You cannot be your own guardian');
     }
+
+    // TODO generate key here
+
 
     // Create guardian relationship
     const guardian = this.guardianRepository.create({

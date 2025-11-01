@@ -18,12 +18,6 @@ import { CurrentUser } from '../common/decorators/current-user.decorator';
 export class FoldersController {
   constructor(private readonly foldersService: FoldersService) {}
 
-  @Get()
-  @HttpCode(HttpStatus.OK)
-  findAll(@CurrentUser() user: { id: number; username: string }) {
-    return this.foldersService.findAll(user.id);
-  }
-
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(
