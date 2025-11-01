@@ -90,4 +90,19 @@ export class UsersService {
   async findByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { email } });
   }
+
+  async resetPassword(userId: number, newPassword: string): Promise<void> {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    // Hash the new password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    // Update user password
+    user.password = hashedPassword;
+    await this.userRepository.save(user);
+  }
 }

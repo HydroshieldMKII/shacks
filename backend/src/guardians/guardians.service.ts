@@ -112,4 +112,52 @@ export class GuardiansService {
 
     return guardian;
   }
+
+  async recoverAccount(
+    email: string,
+    guardianKey1: string,
+    guardianKey2: string,
+    newPassword: string,
+  ) {
+    // Find user by email
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Get all guardians for this user
+    const guardians = await this.guardianRepository
+      .createQueryBuilder('guardian')
+      .where('guardian.guardedEmail = :email', { email })
+      .getMany();
+
+    if (guardians.length < 2) {
+      throw new BadRequestException(
+        'Account recovery requires at least 2 guardians',
+      );
+    }
+
+    // Verify that both keys are valid and belong to different guardians
+    const validGuardians = guardians.filter(
+      (g) => g.guardianKeyValue === guardianKey1 || g.guardianKeyValue === guardianKey2,
+    );
+
+    if (validGuardians.length < 2) {
+      throw new UnauthorizedException('Invalid guardian keys provided');
+    }
+
+    // Ensure the two keys are different (from different guardians)
+    if (guardianKey1 === guardianKey2) {
+      throw new BadRequestException('Both guardian keys must be different');
+    }
+
+    // Update user password
+    await this.usersService.resetPassword(user.id, newPassword);
+
+    return {
+      message: 'Account recovered successfully',
+      email: user.email,
+      username: user.username,
+    };
+  }
 }
