@@ -8,12 +8,15 @@ import cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // DISABLE CORS COMPLETELY - Allow all origins
+  // Allow Chrome extension origins
   app.enableCors({
-    origin: true, // Allow all origins
+    origin: (origin, callback) => {
+      console.log('CORS origin:', origin);
+      return callback(null, true);
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Set-Cookie'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Set-Cookie', 'X-Requested-With'],
     exposedHeaders: ['Set-Cookie'],
   });
 
@@ -25,7 +28,7 @@ async function bootstrap() {
     throw new Error('SESSION_SECRET environment variable is not set');
   }
 
-  // Simplified session configuration for debugging
+  // Session configuration optimized for Chrome extensions
   const sessionConfig = {
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -33,20 +36,13 @@ async function bootstrap() {
     name: 'connect.sid',
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-      httpOnly: true,
-      secure: false, // Disable secure flag for debugging
-      sameSite: 'lax' as 'lax', // Use lax instead of none
-      domain: process.env.COOKIE_DOMAIN || undefined,
+      httpOnly: false, // Chrome extensions can't read httpOnly cookies
+      secure: true,
+      sameSite: 'strict' as 'strict',
+      domain: undefined,
       path: '/',
     },
   };
-
-  console.log('Session config:', {
-    cookieDomain: sessionConfig.cookie.domain,
-    secure: sessionConfig.cookie.secure,
-    sameSite: sessionConfig.cookie.sameSite,
-    httpOnly: sessionConfig.cookie.httpOnly,
-  });
 
   app.use(session(sessionConfig as any));
 
