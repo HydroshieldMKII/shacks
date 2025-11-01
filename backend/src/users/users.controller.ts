@@ -38,6 +38,7 @@ export class UsersController {
     session.userId = result.user.id;
     session.username = result.user.username;
     session.userPassword = loginDto.password; // Store password for encryption/decryption
+    session.email = result.user.email;
 
     return result;
   }
@@ -55,6 +56,7 @@ export class UsersController {
     session.userId = result.user.id;
     session.username = result.user.username;
     session.userPassword = createUserDto.password; // Store password for encryption/decryption
+    session.email = createUserDto.email;
 
     return result;
   }

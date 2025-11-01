@@ -1,11 +1,9 @@
-import { IsInt, IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsEmail } from 'class-validator';
 
 export class CreateGuardianDto {
-  @IsInt()
-  guardedUserId: number;
-
-  @IsInt()
-  userId: number;
+  @IsEmail()
+  @IsNotEmpty()
+  guardedUserEmail: string;
 
   @IsString()
   @IsNotEmpty()

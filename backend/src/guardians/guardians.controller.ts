@@ -28,9 +28,10 @@ export class GuardiansController {
   @HttpCode(HttpStatus.CREATED)
   create(
     @Body() createGuardianDto: CreateGuardianDto,
-    @CurrentUser() user: { id: number; username: string },
+    @CurrentUser() user: { email: string },
   ) {
-    return this.guardiansService.create(createGuardianDto, user.id);
+    // Use the authenticated user's email as identifier and the guarded user's email from body
+    return this.guardiansService.create(createGuardianDto, user.email);
   }
 
   @Delete(':id')
