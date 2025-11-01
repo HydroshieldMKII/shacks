@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shacks-backend
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      SESSION_SECRET: ${SESSION_SECRET:-change-this-secret-key-in-production-use-at-least-32-characters}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-change-this-encryption-key-in-production-use-at-least-32-characters}
+    volumes:
+      - backend_data:/app/data
+    ports:
+      - "3000:3000"
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  backend_data:
+    driver: local
