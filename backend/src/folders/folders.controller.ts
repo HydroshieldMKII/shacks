@@ -12,6 +12,7 @@ import {
 import { FoldersService } from './folders.service';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller('folders')
 export class FoldersController {
@@ -19,52 +20,45 @@ export class FoldersController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  findAll() {
-    // TODO: Check authentication
-    // TODO: Return all folders for current user
-    // TODO: Return 401 if not authenticated
-    return this.foldersService.findAll();
+  findAll(@CurrentUser() user: { id: number; username: string }) {
+    return this.foldersService.findAll(user.id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createFolderDto: CreateFolderDto) {
-    // TODO: Check authentication
-    // TODO: Validate input
-    // TODO: Return 401 if not authenticated
-    // TODO: Return 400 if validation fails
-    return this.foldersService.create(createFolderDto);
+  create(
+    @Body() createFolderDto: CreateFolderDto,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.foldersService.create(createFolderDto, user.id);
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
-    // TODO: Check authentication
-    // TODO: Verify ownership
-    // TODO: Return folder with all passwords
-    // TODO: Return 401 if not authenticated
-    // TODO: Return 404 if not found or not owned by user
-    return this.foldersService.findOne(+id);
+  findOne(
+    @Param('id') id: string,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.foldersService.findOne(+id, user.id);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() updateFolderDto: UpdateFolderDto) {
-    // TODO: Check authentication
-    // TODO: Verify ownership
-    // TODO: Return 401 if not authenticated
-    // TODO: Return 404 if not found or not owned by user
-    return this.foldersService.update(+id, updateFolderDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateFolderDto: UpdateFolderDto,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.foldersService.update(+id, updateFolderDto, user.id);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  remove(@Param('id') id: string) {
-    // TODO: Check authentication
-    // TODO: Verify ownership
-    // TODO: Return 401 if not authenticated
-    // TODO: Return 404 if not found or not owned by user
-    return this.foldersService.remove(+id);
+  remove(
+    @Param('id') id: string,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.foldersService.remove(+id, user.id);
   }
 
   @Post(':folderId/passwords/:passwordId')
@@ -72,12 +66,12 @@ export class FoldersController {
   addPasswordToFolder(
     @Param('folderId') folderId: string,
     @Param('passwordId') passwordId: string,
+    @CurrentUser() user: { id: number; username: string },
   ) {
-    // TODO: Check authentication
-    // TODO: Verify ownership of both folder and password
-    // TODO: Update password's folderId
-    // TODO: Return 401 if not authenticated
-    // TODO: Return 404 if folder or password not found or not owned
-    return this.foldersService.addPasswordToFolder(+folderId, +passwordId);
+    return this.foldersService.addPasswordToFolder(
+      +folderId,
+      +passwordId,
+      user.id,
+    );
   }
 }

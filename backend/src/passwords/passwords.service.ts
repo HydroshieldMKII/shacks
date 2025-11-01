@@ -4,15 +4,14 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class PasswordsService {
-  create(createPasswordDto: CreatePasswordDto) {
-    // TODO: Validate authentication
+  create(createPasswordDto: CreatePasswordDto, userId: number) {
+    // TODO: Validate that the userId matches the authenticated user
     // TODO: Encrypt password before storing
     // TODO: Store in database
-    // TODO: Throw UnauthorizedException if not authenticated
     // TODO: Throw BadRequestException if validation fails
     return {
       id: 123,
-      userId: createPasswordDto.userId,
+      userId: userId,
       folderId: createPasswordDto.folderId,
       name: createPasswordDto.name,
       username: createPasswordDto.username,
@@ -22,15 +21,13 @@ export class PasswordsService {
     };
   }
 
-  findOne(id: number) {
-    // TODO: Validate authentication
-    // TODO: Check ownership
+  findOne(id: number, userId: number) {
+    // TODO: Check ownership - password must belong to userId
     // TODO: Retrieve from database
-    // TODO: Throw UnauthorizedException if not authenticated
     // TODO: Throw NotFoundException if not found or not owned
     return {
       id: id,
-      userId: 1,
+      userId: userId,
       folderId: 1,
       name: 'My Gmail',
       username: 'john@gmail.com',
@@ -40,16 +37,14 @@ export class PasswordsService {
     };
   }
 
-  update(id: number, updatePasswordDto: UpdatePasswordDto) {
-    // TODO: Validate authentication
-    // TODO: Check ownership
+  update(id: number, updatePasswordDto: UpdatePasswordDto, userId: number) {
+    // TODO: Check ownership - password must belong to userId
     // TODO: Encrypt password if updated
     // TODO: Update in database
-    // TODO: Throw UnauthorizedException if not authenticated
     // TODO: Throw NotFoundException if not found or not owned
     return {
       id: id,
-      userId: 1,
+      userId: userId,
       folderId: 1,
       name: updatePasswordDto.name || 'My Gmail',
       username: updatePasswordDto.username || 'john@gmail.com',
@@ -59,15 +54,13 @@ export class PasswordsService {
     };
   }
 
-  remove(id: number) {
-    // TODO: Validate authentication
-    // TODO: Check ownership
+  remove(id: number, userId: number) {
+    // TODO: Check ownership - password must belong to userId
     // TODO: Delete from database
-    // TODO: Throw UnauthorizedException if not authenticated
     // TODO: Throw NotFoundException if not found or not owned
     return {
       id: id,
-      userId: 1,
+      userId: userId,
       folderId: 1,
       name: 'My Gmail',
       username: 'john@gmail.com',

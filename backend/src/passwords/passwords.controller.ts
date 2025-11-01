@@ -12,6 +12,7 @@ import {
 import { PasswordsService } from './passwords.service';
 import { CreatePasswordDto } from './dto/create-password.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller('passwords')
 export class PasswordsController {
@@ -19,41 +20,38 @@ export class PasswordsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createPasswordDto: CreatePasswordDto) {
-    // TODO: Check authentication
-    // TODO: Validate input
-    // TODO: Return 401 if not authenticated
-    // TODO: Return 400 if validation fails
-    return this.passwordsService.create(createPasswordDto);
+  create(
+    @Body() createPasswordDto: CreatePasswordDto,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.passwordsService.create(createPasswordDto, user.id);
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
-    // TODO: Check authentication
-    // TODO: Verify ownership
-    // TODO: Return 401 if not authenticated
-    // TODO: Return 404 if not found or not owned by user
-    return this.passwordsService.findOne(+id);
+  findOne(
+    @Param('id') id: string,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.passwordsService.findOne(+id, user.id);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() updatePasswordDto: UpdatePasswordDto) {
-    // TODO: Check authentication
-    // TODO: Verify ownership
-    // TODO: Return 401 if not authenticated
-    // TODO: Return 404 if not found or not owned by user
-    return this.passwordsService.update(+id, updatePasswordDto);
+  update(
+    @Param('id') id: string,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.passwordsService.update(+id, updatePasswordDto, user.id);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  remove(@Param('id') id: string) {
-    // TODO: Check authentication
-    // TODO: Verify ownership
-    // TODO: Return 401 if not authenticated
-    // TODO: Return 404 if not found or not owned by user
-    return this.passwordsService.remove(+id);
+  remove(
+    @Param('id') id: string,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.passwordsService.remove(+id, user.id);
   }
 }

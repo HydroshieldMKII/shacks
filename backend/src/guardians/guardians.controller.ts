@@ -12,6 +12,7 @@ import {
 import { GuardiansService } from './guardians.service';
 import { CreateGuardianDto } from './dto/create-guardian.dto';
 import { UpdateGuardianDto } from './dto/update-guardian.dto';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller('guardians')
 export class GuardiansController {
@@ -19,30 +20,26 @@ export class GuardiansController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  findAll() {
-    // TODO: Check authentication
-    // TODO: Return all guardians for current user
-    // TODO: Return 401 if not authenticated
-    return this.guardiansService.findAll();
+  findAll(@CurrentUser() user: { id: number; username: string }) {
+    // Authentication is handled by AuthGuard
+    return this.guardiansService.findAll(user.id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createGuardianDto: CreateGuardianDto) {
-    // TODO: Check authentication
-    // TODO: Validate input
-    // TODO: Return 401 if not authenticated
-    // TODO: Return 400 if validation fails
-    return this.guardiansService.create(createGuardianDto);
+  create(
+    @Body() createGuardianDto: CreateGuardianDto,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.guardiansService.create(createGuardianDto, user.id);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  remove(@Param('id') id: string) {
-    // TODO: Check authentication
-    // TODO: Verify authorization (must be guardian or guarded user)
-    // TODO: Return 401 if not authenticated
-    // TODO: Return 404 if not found or not authorized
-    return this.guardiansService.remove(+id);
+  remove(
+    @Param('id') id: string,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.guardiansService.remove(+id, user.id);
   }
 }

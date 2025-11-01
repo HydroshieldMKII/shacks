@@ -8,9 +8,6 @@ import {
 
 export class CreatePasswordDto {
   @IsInt()
-  userId: number;
-
-  @IsInt()
   folderId: number;
 
   @IsString()

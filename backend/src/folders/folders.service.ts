@@ -4,11 +4,8 @@ import { UpdateFolderDto } from './dto/update-folder.dto';
 
 @Injectable()
 export class FoldersService {
-  findAll() {
-    // TODO: Validate authentication
-    // TODO: Get current user from session/token
-    // TODO: Return all folders for current user
-    // TODO: Throw UnauthorizedException if not authenticated
+  findAll(userId: number) {
+    // TODO: Get all folders for the specified userId from database
     return [
       { id: 1, name: 'Work' },
       { id: 2, name: 'Personal' },
@@ -16,11 +13,8 @@ export class FoldersService {
     ];
   }
 
-  create(createFolderDto: CreateFolderDto) {
-    // TODO: Validate authentication
-    // TODO: Validate input
-    // TODO: Create folder in database
-    // TODO: Throw UnauthorizedException if not authenticated
+  create(createFolderDto: CreateFolderDto, userId: number) {
+    // TODO: Create folder in database associated with userId
     // TODO: Throw BadRequestException if validation fails
     return {
       id: 4,
@@ -28,11 +22,9 @@ export class FoldersService {
     };
   }
 
-  findOne(id: number) {
-    // TODO: Validate authentication
-    // TODO: Check ownership
-    // TODO: Get folder with all passwords
-    // TODO: Throw UnauthorizedException if not authenticated
+  findOne(id: number, userId: number) {
+    // TODO: Check ownership - folder must belong to userId
+    // TODO: Get folder with all passwords from database
     // TODO: Throw NotFoundException if not found or not owned
     return {
       id: id,
@@ -40,7 +32,7 @@ export class FoldersService {
       passwords: [
         {
           id: 123,
-          userId: 1,
+          userId: userId,
           folderId: id,
           name: 'Company Email',
           username: 'john@company.com',
@@ -50,7 +42,7 @@ export class FoldersService {
         },
         {
           id: 124,
-          userId: 1,
+          userId: userId,
           folderId: id,
           name: 'Slack',
           username: 'john@company.com',
@@ -62,11 +54,9 @@ export class FoldersService {
     };
   }
 
-  update(id: number, updateFolderDto: UpdateFolderDto) {
-    // TODO: Validate authentication
-    // TODO: Check ownership
+  update(id: number, updateFolderDto: UpdateFolderDto, userId: number) {
+    // TODO: Check ownership - folder must belong to userId
     // TODO: Update folder in database
-    // TODO: Throw UnauthorizedException if not authenticated
     // TODO: Throw NotFoundException if not found or not owned
     return {
       id: id,
@@ -74,12 +64,10 @@ export class FoldersService {
     };
   }
 
-  remove(id: number) {
-    // TODO: Validate authentication
-    // TODO: Check ownership
+  remove(id: number, userId: number) {
+    // TODO: Check ownership - folder must belong to userId
     // TODO: Delete folder from database
     // TODO: Consider what to do with passwords in folder (cascade delete or move to default folder)
-    // TODO: Throw UnauthorizedException if not authenticated
     // TODO: Throw NotFoundException if not found or not owned
     return {
       id: id,
@@ -87,15 +75,13 @@ export class FoldersService {
     };
   }
 
-  addPasswordToFolder(folderId: number, passwordId: number) {
-    // TODO: Validate authentication
-    // TODO: Check ownership of both folder and password
+  addPasswordToFolder(folderId: number, passwordId: number, userId: number) {
+    // TODO: Check ownership of both folder and password (must belong to userId)
     // TODO: Update password's folderId in database
-    // TODO: Throw UnauthorizedException if not authenticated
     // TODO: Throw NotFoundException if folder or password not found or not owned
     return {
       id: passwordId,
-      userId: 1,
+      userId: userId,
       folderId: folderId,
       name: 'My Gmail',
       username: 'john@gmail.com',

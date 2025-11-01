@@ -18,7 +18,7 @@ HTTP CODE POSSIBLE: REASON → BODY CONTENT
 GET "/users/me"
 401: not connected or session cookie invalid -> {}
 200: authenticated -> {
-  id: 1, 
+  id: 1,
   username: "john_doe"
 }
 

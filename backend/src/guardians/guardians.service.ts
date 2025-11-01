@@ -4,33 +4,29 @@ import { UpdateGuardianDto } from './dto/update-guardian.dto';
 
 @Injectable()
 export class GuardiansService {
-  findAll() {
-    // TODO: Validate authentication
-    // TODO: Get current user from session/token
-    // TODO: Return all guardians for current user
-    // TODO: Throw UnauthorizedException if not authenticated
+  findAll(userId: number) {
+    // TODO: Get all guardians where userId matches (either as guardian or guarded user)
+    // TODO: Return from database
     return [
       {
         id: 1,
         guardedUserId: 2,
-        userId: 1,
+        userId: userId,
         guardianKeyValue: 'unique_key_123',
       },
       {
         id: 2,
         guardedUserId: 3,
-        userId: 1,
+        userId: userId,
         guardianKeyValue: 'unique_key_456',
       },
     ];
   }
 
-  create(createGuardianDto: CreateGuardianDto) {
-    // TODO: Validate authentication
-    // TODO: Validate input
+  create(createGuardianDto: CreateGuardianDto, userId: number) {
+    // TODO: Validate that userId matches one of the users in the relationship
     // TODO: Generate or validate guardianKeyValue
     // TODO: Create guardian in database
-    // TODO: Throw UnauthorizedException if not authenticated
     // TODO: Throw BadRequestException if validation fails
     return {
       id: 3,
@@ -40,16 +36,14 @@ export class GuardiansService {
     };
   }
 
-  remove(id: number) {
-    // TODO: Validate authentication
-    // TODO: Check authorization (must be guardian or guarded user)
+  remove(id: number, userId: number) {
+    // TODO: Check authorization - user must be either guardian or guarded user
     // TODO: Delete guardian from database
-    // TODO: Throw UnauthorizedException if not authenticated
     // TODO: Throw NotFoundException if not found or not authorized
     return {
       id: id,
       guardedUserId: 2,
-      userId: 1,
+      userId: userId,
       guardianKeyValue: 'unique_key_123',
     };
   }
