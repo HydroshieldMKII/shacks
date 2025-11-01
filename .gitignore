@@ -1,1 +1,4 @@
 .env
+db.sqlite
+.DS_Store
+.idea
