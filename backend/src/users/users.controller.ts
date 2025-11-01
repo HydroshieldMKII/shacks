@@ -86,6 +86,7 @@ export class UsersController {
   async login(
     @Body() loginDto: LoginDto,
     @Session() session: Record<string, any>,
+    @Req() req: Request,
   ) {
     const result = await this.usersService.login(loginDto);
 
@@ -94,6 +95,14 @@ export class UsersController {
     session.username = result.user.username;
     session.userPassword = loginDto.password; // Store password for encryption/decryption
     session.email = result.user.email;
+
+    // Explicitly save the session to ensure cookie is set
+    await new Promise<void>((resolve, reject) => {
+      (req as any).session.save((err: any) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
 
     return result;
   }

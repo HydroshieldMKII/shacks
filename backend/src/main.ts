@@ -16,7 +16,7 @@ async function bootstrap() {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Set-Cookie', 'X-Requested-With'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Set-Cookie'],
     exposedHeaders: ['Set-Cookie'],
   });
 
@@ -32,17 +32,25 @@ async function bootstrap() {
   const sessionConfig = {
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: false, // Set to true to ensure cookie is set even on first request
     name: 'connect.sid',
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       httpOnly: false, // Chrome extensions can't read httpOnly cookies
-      secure: true,
-      sameSite: 'strict' as 'strict',
+      secure: false, // Required for HTTPS
+      sameSite: 'strict', // Required for cross-origin (different domains)
       domain: undefined,
       path: '/',
     },
   };
+
+  console.log('Session config:', {
+    name: sessionConfig.name,
+    secure: sessionConfig.cookie.secure,
+    sameSite: sessionConfig.cookie.sameSite,
+    httpOnly: sessionConfig.cookie.httpOnly,
+    saveUninitialized: sessionConfig.saveUninitialized,
+  });
 
   app.use(session(sessionConfig as any));
 
