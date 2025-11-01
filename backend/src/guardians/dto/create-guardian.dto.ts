@@ -6,6 +6,11 @@ export class CreateGuardianDto {
     description: 'Email of the user to be guarded',
     example: 'user@example.com',
   })
+
+  @IsEmail()
+  @IsNotEmpty()
+  guardedUserEmail: string;
+
   @IsString()
   @IsNotEmpty()
   @IsEmail()

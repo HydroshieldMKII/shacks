@@ -3,18 +3,21 @@ import {
   NotFoundException,
   ForbiddenException,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateGuardianDto } from './dto/create-guardian.dto';
 import { UpdateGuardianDto } from './dto/update-guardian.dto';
 import { Guardian } from './entities/guardian.entity';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class GuardiansService {
   constructor(
     @InjectRepository(Guardian)
     private readonly guardianRepository: Repository<Guardian>,
+    private readonly usersService: UsersService,
   ) {}
 
   async findAll(userId: number) {
@@ -53,15 +56,29 @@ export class GuardiansService {
     return Math.random().toString(36).substring(2, 15);
   }
 
-  async create(createGuardianDto: CreateGuardianDto, userId: number) {
-    // Check if user is trying to guard themselves
-    // Note: We can't check this directly since we need to look up the email
-    // This check would require fetching the current user's email
+  async create(createGuardianDto: CreateGuardianDto, userEmail: string) {
+    // Resolve authenticated user by email
+    if (!userEmail) {
+      throw new UnauthorizedException('Authenticated user email not available');
+    }
+
+    const authUser = await this.usersService.findByEmail(userEmail);
+    if (!authUser) {
+      throw new UnauthorizedException('Authenticated user not found');
+    }
+
+    // Resolve guarded user by email provided in body
+    const guardedUser = await this.usersService.findByEmail(
+      createGuardianDto.guardedUserEmail,
+    );
+    if (!guardedUser) {
+      throw new NotFoundException('Guarded user not found');
+    }
 
     // Generate guardian key
     const guardianKeyValue = this.generateGuardianKey();
 
-    // Create guardian relationship
+    // Create guardian relationship between authUser and guardedUser
     const guardian = this.guardianRepository.create({
       guardedEmail: createGuardianDto.guardedEmail,
       userId: userId,
