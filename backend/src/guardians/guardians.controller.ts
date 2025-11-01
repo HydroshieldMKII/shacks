@@ -19,7 +19,9 @@ import {
 import { GuardiansService } from './guardians.service';
 import { CreateGuardianDto } from './dto/create-guardian.dto';
 import { UpdateGuardianDto } from './dto/update-guardian.dto';
+import { RecoverAccountDto } from './dto/recover-account.dto';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { Public } from '../common/decorators/public.decorator';
 
 @ApiTags('guardians')
 @ApiCookieAuth()
@@ -163,5 +165,57 @@ export class GuardiansController {
     @CurrentUser() user: { id: number; username: string },
   ) {
     return this.guardiansService.remove(+id, user.id);
+  }
+
+  @Public()
+  @Post('recover')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Recover account using guardian keys',
+    description:
+      'Allows a user to recover their account by providing their email and 2 valid guardian keys. The password will be reset to the new password provided.',
+  })
+  @ApiBody({ type: RecoverAccountDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Account recovered successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Account recovered successfully',
+        },
+        email: {
+          type: 'string',
+          example: 'user@example.com',
+        },
+        username: {
+          type: 'string',
+          example: 'johndoe',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'Bad Request - Not enough guardians or invalid keys',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - Invalid guardian keys',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found - User does not exist',
+  })
+  recoverAccount(@Body() recoverAccountDto: RecoverAccountDto) {
+    return this.guardiansService.recoverAccount(
+      recoverAccountDto.email,
+      recoverAccountDto.guardianKey1,
+      recoverAccountDto.guardianKey2,
+      recoverAccountDto.newPassword,
+    );
   }
 }

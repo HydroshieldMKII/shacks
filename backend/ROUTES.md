@@ -218,43 +218,62 @@ POST "/folders/:folderId/passwords/:passwordId"
 ```cpp
 GET "/guardians"
 401: not connected or session cookie invalid -> {}
-200: return all guardians for current user -> [
-  {
-    id: 1,
-    guardedUserId: 2,
-    userId: 1,
-    guardianKeyValue: "unique_key_123"
-  },
-  {
-    id: 2,
-    guardedUserId: 3,
-    userId: 1,
-    guardianKeyValue: "unique_key_456"
-  }
-]
+200: return all guardians for current user -> {
+  protecting: [
+    {
+      id: 1,
+      userId: 1,
+      guardedEmail: "alice@example.com",
+      guardianKeyValue: "a1b2c3d4e5f67890abcdef1234567890"
+    }
+  ],
+  protected: [
+    {
+      id: 2,
+      userId: 3,
+      guardedEmail: "john@example.com"
+    }
+  ]
+}
 
 POST "/guardians"
 Body: {
-  guardedUserId: 2,
-  userId: 1,
-  guardianKeyValue: "unique_key_789"
+  guardedEmail: "alice@example.com"
 }
 401: not connected or session cookie invalid -> {}
 400: validation failed -> {error: "Invalid input"}
+404: guarded user not found -> {error: "Guarded user not found"}
 201: success -> {
-  id: 3,
-  guardedUserId: 2,
+  id: 1,
   userId: 1,
-  guardianKeyValue: "unique_key_789"
+  guardedEmail: "alice@example.com",
+  guardianKeyValue: "a1b2c3d4e5f67890abcdef1234567890"
 }
 
 DELETE "/guardians/:guardianId"
 401: not connected or session cookie invalid -> {}
-404: guardian doesn't exist or not authorized -> {error: "Guardian not found"}
+403: not your guardian relationship -> {error: "Access denied"}
+404: guardian doesn't exist -> {error: "Guardian relationship not found"}
 200: success -> {
   id: 1,
-  guardedUserId: 2,
   userId: 1,
-  guardianKeyValue: "unique_key_123"
+  guardedEmail: "alice@example.com",
+  guardianKeyValue: "a1b2c3d4e5f67890abcdef1234567890"
+}
+
+POST "/guardians/recover" (PUBLIC - No authentication required)
+Body: {
+  email: "alice@example.com",
+  guardianKey1: "a1b2c3d4e5f67890abcdef1234567890",
+  guardianKey2: "fedcba0987654321fedcba0987654321",
+  newPassword: "NewSecurePassword123!"
+}
+400: not enough guardians or same keys -> {error: "Account recovery requires at least 2 guardians" | "Both guardian keys must be different"}
+401: invalid guardian keys -> {error: "Invalid guardian keys provided"}
+404: user not found -> {error: "User not found"}
+200: success -> {
+  message: "Account recovered successfully",
+  email: "alice@example.com",
+  username: "alice"
 }
 ```
