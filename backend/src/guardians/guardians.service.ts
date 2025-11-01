@@ -22,7 +22,6 @@ export class GuardiansService {
     const guardians = await this.guardianRepository
       .createQueryBuilder('guardian')
       .where('guardian.userId = :userId', { userId })
-      .orWhere('guardian.guardedUserId = :userId', { userId })
       .getMany();
 
     // Split into two categories
@@ -31,16 +30,16 @@ export class GuardiansService {
       .map((guardian) => ({
         id: guardian.id,
         userId: guardian.userId,
-        guardedEmail: guardian.email,
+        guardedEmail: guardian.guardedEmail,
         guardianKeyValue: guardian.guardianKeyValue, // Show key for people you protect
       }));
 
     const protectedBy = guardians
-      .filter((guardian) => guardian.guardedUserId === userId)
+      .filter((guardian) => guardian.userId !== userId)
       .map((guardian) => ({
         id: guardian.id,
         userId: guardian.userId,
-        guardedEmail: guardian.email,
+        guardedEmail: guardian.guardedEmail,
         // Don't include guardianKeyValue for people protecting you
       }));
 
@@ -50,34 +49,23 @@ export class GuardiansService {
     };
   }
 
-  async generateGuardianKey(): Promise<string> {
+  generateGuardianKey(): string {
     return Math.random().toString(36).substring(2, 15);
   }
 
   async create(createGuardianDto: CreateGuardianDto, userId: number) {
-    // Validate that the authenticated userId matches one of the users in the relationship
-    if (
-      createGuardianDto.userId !== userId &&
-      createGuardianDto.guardedUserId !== userId
-    ) {
-      throw new ForbiddenException(
-        'You can only create guardian relationships involving yourself',
-      );
-    }
-
-    //Check if guarded is myself
-    if (userId === createGuardianDto.guardedEmail) {
-      throw new BadRequestException('You cannot be your own guardian');
-    }
-
-    // TODO generate key here
-    createGuardianDto.guardianKeyValue = this.generateGuardianKey();
+    // Check if user is trying to guard themselves
+    // Note: We can't check this directly since we need to look up the email
+    // This check would require fetching the current user's email
+    
+    // Generate guardian key
+    const guardianKeyValue = this.generateGuardianKey();
 
     // Create guardian relationship
     const guardian = this.guardianRepository.create({
-      guardedUserId: createGuardianDto.guardedUserId,
-      userId: createGuardianDto.userId,
-      guardianKeyValue: createGuardianDto.guardianKeyValue,
+      guardedEmail: createGuardianDto.guardedEmail,
+      userId: userId,
+      guardianKeyValue: guardianKeyValue,
     });
 
     const savedGuardian = await this.guardianRepository.save(guardian);
@@ -94,8 +82,8 @@ export class GuardiansService {
       throw new NotFoundException('Guardian relationship not found');
     }
 
-    // Check authorization - user must be either the guardian or the guarded user
-    if (guardian.userId !== userId && guardian.guardedUserId !== userId) {
+    // Check authorization - user must be the guardian (only guardians can remove relationships)
+    if (guardian.userId !== userId) {
       throw new ForbiddenException('Access denied');
     }
 

@@ -75,7 +75,12 @@ export class PasswordsService {
     });
 
     // Group passwords by folder
-    const foldersWithPasswords = folders.map((folder) => ({
+    const foldersWithPasswords: Array<{
+      id: number | null;
+      name: string;
+      userId: number;
+      passwords: Password[];
+    }> = folders.map((folder) => ({
       id: folder.id,
       name: folder.name,
       userId: folder.userId,
