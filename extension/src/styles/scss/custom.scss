@@ -17,7 +17,7 @@ $theme-colors: (
 );
 
 // 🧩 Import de Bootstrap APRÈS les overrides
-@import "bootstrap/scss/bootstrap";
+@import "../../../node_modules/bootstrap/scss/bootstrap";
 
 // ✨ Amélioration du contraste du texte et des placeholders
 body {
