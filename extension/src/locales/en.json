@@ -1,9 +1,25 @@
 {
-  "title": "Login",
-  "email": "Email address",
-  "email_hint": "Enter your login email.",
+  "app_name": "TRUST",
+  "login_title": "Login",
+  "signup_title": "Sign up",
+  "signup_intro": "A password manager based on trusted people. First, create an account or log in.",
+  "email": "Email",
   "password": "Password",
+  "confirm_password": "Confirm password",
+  "email_hint": "Enter your email address.",
   "password_hint": "Your password must be at least 8 characters long.",
-  "login": "Sign in",
-  "signup": "No account? Sign up!"
+  "confirm_hint": "Repeat the password to confirm.",
+  "login": "Log in",
+  "signup": "No account? Sign up!",
+  "signup_button": "Sign up",
+  "login_redirect": "Already have an account? Log in!",
+  "signup_action": "Create account",
+  "back_to_login": "Already have an account? Log in",
+  "errors": {
+    "email_required": "Please enter an email.",
+    "email_invalid": "Invalid email address.",
+    "password_required": "Please enter a password.",
+    "password_length": "Password must be at least 8 characters long.",
+    "password_mismatch": "Passwords do not match."
+  }
 }

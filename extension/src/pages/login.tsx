@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
-import { Form } from "react-bootstrap";
+import { Form, Button, InputGroup } from "react-bootstrap";
+import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
+import { Link } from "react-router-dom";
 import { locales } from "../locales";
 import type { LocaleKey } from "../locales";
-import { InputEmail } from "../components/inputs/InputEmail";
-import { InputPassword } from "../components/inputs/InputPassword";
-import { SubmitButton } from "../components/buttons/SubmitButton";
-import { LangSwitch } from "../components/misc/LangSwitch";
-import { FormContainer } from "../components/layout/FormContainer";
 
 function Login() {
+    const [show_password, set_show_password] = useState(false);
     const [lang, set_lang] = useState<LocaleKey>("fr");
     const [errors, set_errors] = useState<{ email?: string; password?: string }>({});
 
@@ -27,38 +25,98 @@ function Login() {
         const email_value = form.formEmail.value.trim();
         const password_value = form.formPassword.value.trim();
 
-        if (!email_value)
-            new_errors.email = lang === "fr" ? "Veuillez entrer un courriel." : "Please enter an email.";
-        else if (!/\S+@\S+\.\S+/.test(email_value))
-            new_errors.email = lang === "fr" ? "Adresse courriel invalide." : "Invalid email address.";
+        if (!email_value) {
+            new_errors.email = t.errors.email_required;
+        } else if (!/\S+@\S+\.\S+/.test(email_value)) {
+            new_errors.email = t.errors.email_invalid;
+        }
 
-        if (!password_value)
-            new_errors.password = lang === "fr" ? "Veuillez entrer un mot de passe." : "Please enter a password.";
-        else if (password_value.length < 8)
-            new_errors.password =
-                lang === "fr"
-                    ? "Le mot de passe doit contenir au moins 8 caractères."
-                    : "Password must be at least 8 characters long.";
+        if (!password_value) {
+            new_errors.password = t.errors.password_required;
+        } else if (password_value.length < 8) {
+            new_errors.password = t.errors.password_length;
+        }
 
         set_errors(new_errors);
     };
 
     return (
-        <FormContainer title={t.title}>
-            <Form noValidate onSubmit={handle_submit}>
-                <InputEmail label={t.email} hint={t.email_hint} error={errors.email} />
-                <InputPassword label={t.password} hint={t.password_hint} error={errors.password} />
-                <SubmitButton label={t.login} />
-            </Form>
+        <div className="d-flex flex-column justify-content-center align-items-center bg-dark text-light vh-100 w-100 p-3">
+            <div className="w-100" style={{ maxWidth: "360px" }}>
+                {/* App title */}
+                <h1 className="text-center mb-1 text-success fw-bold fs-3">TRUST</h1>
+                {/* Page title */}
+                <h2 className="text-center mb-4 fw-semibold">{t.login_title}</h2>
 
-            <div className="text-center mt-3">
-                <a href="#" className="text-primary text-decoration-underline small">
-                    {t.signup}
-                </a>
+                <Form noValidate onSubmit={handle_submit}>
+                    <Form.Group className="mb-3" controlId="formEmail">
+                        <Form.Label className="fw-semibold small">{t.email}</Form.Label>
+                        <Form.Control
+                            type="email"
+                            className={`form-control-sm bg-dark text-light border-secondary ${
+                                errors.email ? "is-invalid" : ""
+                            }`}
+                        />
+                        {errors.email ? (
+                            <Form.Control.Feedback type="invalid" className="text-danger small">
+                                {errors.email}
+                            </Form.Control.Feedback>
+                        ) : (
+                            <Form.Text className="text-secondary small">{t.email_hint}</Form.Text>
+                        )}
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formPassword">
+                        <Form.Label className="fw-semibold small">{t.password}</Form.Label>
+                        <InputGroup size="sm">
+                            <Form.Control
+                                type={show_password ? "text" : "password"}
+                                className={`bg-dark text-light border-secondary rounded-start-3 ${
+                                    errors.password ? "is-invalid" : ""
+                                }`}
+                            />
+                            <Button
+                                variant="outline-secondary"
+                                type="button"
+                                onClick={() => set_show_password(!show_password)}
+                                className="rounded-end-3 border-secondary"
+                            >
+                                {show_password ? <EyeSlashFill /> : <EyeFill />}
+                            </Button>
+                        </InputGroup>
+                        {errors.password ? (
+                            <Form.Control.Feedback type="invalid" className="text-danger small d-block">
+                                {errors.password}
+                            </Form.Control.Feedback>
+                        ) : (
+                            <Form.Text className="text-secondary small">{t.password_hint}</Form.Text>
+                        )}
+                    </Form.Group>
+
+                    <div className="d-grid">
+                        <Button variant="primary" type="submit" className="rounded-3 fw-semibold btn-sm">
+                            {t.login}
+                        </Button>
+                    </div>
+                </Form>
+
+                <div className="text-center mt-3">
+                    <Link to="/signup" className="text-primary text-decoration-underline small">
+                        {t.signup}
+                    </Link>
+                </div>
+
+                <div className="text-center mt-3">
+                    <small
+                        className="text-secondary"
+                        style={{ cursor: "pointer", userSelect: "none" }}
+                        onClick={() => set_lang(lang === "fr" ? "en" : "fr")}
+                    >
+                        {lang === "fr" ? "FR | EN" : "EN | FR"}
+                    </small>
+                </div>
             </div>
-
-            <LangSwitch lang={lang} on_toggle={() => set_lang(lang === "fr" ? "en" : "fr")} />
-        </FormContainer>
+        </div>
     );
 }
 
