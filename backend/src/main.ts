@@ -10,11 +10,15 @@ async function bootstrap() {
   // Enable cookie parser
   app.use(cookieParser());
 
+  // Throw error if SESSION_SECRET is not set
+  if (!process.env.SESSION_SECRET) {
+    throw new Error('SESSION_SECRET environment variable is not set');
+  }
+
   // Configure session
   app.use(
     session({
-      secret:
-        process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+      secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
       cookie: {

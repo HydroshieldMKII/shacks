@@ -1,29 +1,27 @@
 import {
   Injectable,
   NotFoundException,
-  BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 import { CreatePasswordDto } from './dto/create-password.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Password } from './entities/password.entity';
+import { EncryptionService } from '../common/services/encryption.service';
 
 @Injectable()
 export class PasswordsService {
   constructor(
     @InjectRepository(Password)
     private readonly passwordRepository: Repository<Password>,
+    private readonly encryptionService: EncryptionService,
   ) {}
 
   async create(createPasswordDto: CreatePasswordDto, userId: number) {
-    // Encrypt password before storing (using bcrypt for consistency)
-    const saltRounds = 10;
-    const encryptedPassword = await bcrypt.hash(
+    // Encrypt password using AES (reversible encryption for password manager)
+    const encryptedPassword = this.encryptionService.encrypt(
       createPasswordDto.password,
-      saltRounds,
     );
 
     // Create password entry
@@ -86,11 +84,9 @@ export class PasswordsService {
       password.username = updatePasswordDto.username;
     }
     if (updatePasswordDto.password !== undefined) {
-      // Encrypt new password
-      const saltRounds = 10;
-      password.password = await bcrypt.hash(
+      // Encrypt new password using AES
+      password.password = this.encryptionService.encrypt(
         updatePasswordDto.password,
-        saltRounds,
       );
     }
     if (updatePasswordDto.url !== undefined) {

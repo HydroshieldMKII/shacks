@@ -40,7 +40,6 @@ export class UsersService {
     }
 
     return {
-      session_token: 'COOKIE_HERE_FOR_AUTH',
       user: { id: user.id, username: user.username },
     };
   }
@@ -53,11 +52,6 @@ export class UsersService {
 
     if (existingUser) {
       throw new ConflictException('Username already exists');
-    }
-
-    // Validate password requirements (already done by class-validator MinLength)
-    if (createUserDto.password.length < 8) {
-      throw new BadRequestException('Password must be at least 8 characters');
     }
 
     // Hash password
@@ -76,7 +70,6 @@ export class UsersService {
     const savedUser = await this.userRepository.save(user);
 
     return {
-      session_token: 'COOKIE_HERE_FOR_AUTH',
       user: { id: savedUser.id, username: savedUser.username },
     };
   }

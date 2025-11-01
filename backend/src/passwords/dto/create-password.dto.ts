@@ -22,12 +22,12 @@ export class CreatePasswordDto {
   @IsNotEmpty()
   password: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   @IsUrl()
   url?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   notes?: string;
 }
