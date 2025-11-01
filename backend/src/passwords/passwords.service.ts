@@ -25,10 +25,11 @@ export class PasswordsService {
     userPassword: string,
   ) {
     if (!userPassword) {
-      throw new BadRequestException(
-        'User password required for encryption',
-      );
+      throw new BadRequestException('User password required for encryption');
     }
+
+    // Store the original password before encryption
+    const originalPassword = createPasswordDto.password;
 
     // Encrypt password using AES with user's password + master key
     const encryptedPassword = this.encryptionService.encrypt(
@@ -50,7 +51,20 @@ export class PasswordsService {
     const password = this.passwordRepository.create(passwordData);
     const savedPassword = await this.passwordRepository.save(password);
 
-    return savedPassword;
+    // Return the saved password with the original unencrypted password
+    return {
+      ...savedPassword,
+      password: originalPassword,
+    };
+  }
+
+  async findAll(userId: number) {
+    const passwords = await this.passwordRepository.find({
+      where: { userId },
+      order: { id: 'DESC' },
+    });
+
+    return passwords;
   }
 
   async findOne(id: number, userId: number, userPassword?: string) {
@@ -108,9 +122,7 @@ export class PasswordsService {
     if (updatePasswordDto.password !== undefined) {
       // Encrypt new password using AES with user's password
       if (!userPassword) {
-        throw new BadRequestException(
-          'User password required for encryption',
-        );
+        throw new BadRequestException('User password required for encryption');
       }
       password.password = this.encryptionService.encrypt(
         updatePasswordDto.password,

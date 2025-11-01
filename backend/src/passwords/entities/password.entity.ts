@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Folder } from '../../folders/entities/folder.entity';
 
 @Entity()
 export class Password {
@@ -8,8 +9,14 @@ export class Password {
   @Column()
   userId: number;
 
-  @Column()
+  @Column({ nullable: true })
   folderId: number;
+
+  @ManyToOne(() => Folder, (folder) => folder.passwords, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'folderId' })
+  folder: Folder;
 
   @Column()
   name: string;

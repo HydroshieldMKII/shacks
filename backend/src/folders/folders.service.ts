@@ -92,6 +92,7 @@ export class FoldersService {
   async remove(id: number, userId: number) {
     const folder = await this.folderRepository.findOne({
       where: { id },
+      relations: ['passwords'], // Load related passwords
     });
 
     if (!folder) {
@@ -103,10 +104,7 @@ export class FoldersService {
       throw new ForbiddenException('Access denied');
     }
 
-    // Note: Passwords in this folder will need to be handled
-    // For now, we'll just delete the folder
-    // In production, you might want to move passwords to a default folder
-    // or delete them with CASCADE in the database schema
+    // Delete folder - passwords will be automatically deleted due to CASCADE
     await this.folderRepository.remove(folder);
 
     return folder;

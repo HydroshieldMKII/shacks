@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Password } from '../../passwords/entities/password.entity';
 
 @Entity()
 export class Folder {
@@ -10,4 +11,10 @@ export class Folder {
 
   @Column()
   name: string;
+
+  @OneToMany(() => Password, (password) => password.folder, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  passwords: Password[];
 }
