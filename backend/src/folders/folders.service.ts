@@ -1,93 +1,152 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
+import { Folder } from './entities/folder.entity';
+import { Password } from '../passwords/entities/password.entity';
 
 @Injectable()
 export class FoldersService {
-  findAll(userId: number) {
-    // TODO: Get all folders for the specified userId from database
-    return [
-      { id: 1, name: 'Work' },
-      { id: 2, name: 'Personal' },
-      { id: 3, name: 'Finance' },
-    ];
+  constructor(
+    @InjectRepository(Folder)
+    private readonly folderRepository: Repository<Folder>,
+    @InjectRepository(Password)
+    private readonly passwordRepository: Repository<Password>,
+  ) {}
+
+  async findAll(userId: number) {
+    // Get all folders for the specified userId
+    const folders = await this.folderRepository.find({
+      where: { userId },
+    });
+
+    return folders;
   }
 
-  create(createFolderDto: CreateFolderDto, userId: number) {
-    // TODO: Create folder in database associated with userId
-    // TODO: Throw BadRequestException if validation fails
-    return {
-      id: 4,
+  async create(createFolderDto: CreateFolderDto, userId: number) {
+    // Create folder associated with userId
+    const folder = this.folderRepository.create({
       name: createFolderDto.name,
-    };
-  }
-
-  findOne(id: number, userId: number) {
-    // TODO: Check ownership - folder must belong to userId
-    // TODO: Get folder with all passwords from database
-    // TODO: Throw NotFoundException if not found or not owned
-    return {
-      id: id,
-      name: 'Work',
-      passwords: [
-        {
-          id: 123,
-          userId: userId,
-          folderId: id,
-          name: 'Company Email',
-          username: 'john@company.com',
-          password: 'encrypted_password',
-          url: 'https://mail.company.com',
-          notes: 'Work email',
-        },
-        {
-          id: 124,
-          userId: userId,
-          folderId: id,
-          name: 'Slack',
-          username: 'john@company.com',
-          password: 'encrypted_password',
-          url: 'https://slack.com',
-          notes: null,
-        },
-      ],
-    };
-  }
-
-  update(id: number, updateFolderDto: UpdateFolderDto, userId: number) {
-    // TODO: Check ownership - folder must belong to userId
-    // TODO: Update folder in database
-    // TODO: Throw NotFoundException if not found or not owned
-    return {
-      id: id,
-      name: updateFolderDto.name || 'Work',
-    };
-  }
-
-  remove(id: number, userId: number) {
-    // TODO: Check ownership - folder must belong to userId
-    // TODO: Delete folder from database
-    // TODO: Consider what to do with passwords in folder (cascade delete or move to default folder)
-    // TODO: Throw NotFoundException if not found or not owned
-    return {
-      id: id,
-      name: 'Work',
-    };
-  }
-
-  addPasswordToFolder(folderId: number, passwordId: number, userId: number) {
-    // TODO: Check ownership of both folder and password (must belong to userId)
-    // TODO: Update password's folderId in database
-    // TODO: Throw NotFoundException if folder or password not found or not owned
-    return {
-      id: passwordId,
       userId: userId,
-      folderId: folderId,
-      name: 'My Gmail',
-      username: 'john@gmail.com',
-      password: 'encrypted_password',
-      url: 'https://gmail.com',
-      notes: 'Personal email account',
+    });
+
+    const savedFolder = await this.folderRepository.save(folder);
+
+    return savedFolder;
+  }
+
+  async findOne(id: number, userId: number) {
+    const folder = await this.folderRepository.findOne({
+      where: { id },
+    });
+
+    if (!folder) {
+      throw new NotFoundException('Folder not found');
+    }
+
+    // Check ownership
+    if (folder.userId !== userId) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    // Get all passwords in this folder
+    const passwords = await this.passwordRepository.find({
+      where: { folderId: id, userId: userId },
+    });
+
+    return {
+      ...folder,
+      passwords,
     };
+  }
+
+  async update(id: number, updateFolderDto: UpdateFolderDto, userId: number) {
+    const folder = await this.folderRepository.findOne({
+      where: { id },
+    });
+
+    if (!folder) {
+      throw new NotFoundException('Folder not found');
+    }
+
+    // Check ownership
+    if (folder.userId !== userId) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    // Update folder
+    if (updateFolderDto.name !== undefined) {
+      folder.name = updateFolderDto.name;
+    }
+
+    const updatedFolder = await this.folderRepository.save(folder);
+
+    return updatedFolder;
+  }
+
+  async remove(id: number, userId: number) {
+    const folder = await this.folderRepository.findOne({
+      where: { id },
+    });
+
+    if (!folder) {
+      throw new NotFoundException('Folder not found');
+    }
+
+    // Check ownership
+    if (folder.userId !== userId) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    // Note: Passwords in this folder will need to be handled
+    // For now, we'll just delete the folder
+    // In production, you might want to move passwords to a default folder
+    // or delete them with CASCADE in the database schema
+    await this.folderRepository.remove(folder);
+
+    return folder;
+  }
+
+  async addPasswordToFolder(
+    folderId: number,
+    passwordId: number,
+    userId: number,
+  ) {
+    // Check folder exists and user owns it
+    const folder = await this.folderRepository.findOne({
+      where: { id: folderId },
+    });
+
+    if (!folder) {
+      throw new NotFoundException('Folder not found');
+    }
+
+    if (folder.userId !== userId) {
+      throw new ForbiddenException('Access denied to folder');
+    }
+
+    // Check password exists and user owns it
+    const password = await this.passwordRepository.findOne({
+      where: { id: passwordId },
+    });
+
+    if (!password) {
+      throw new NotFoundException('Password not found');
+    }
+
+    if (password.userId !== userId) {
+      throw new ForbiddenException('Access denied to password');
+    }
+
+    // Update password's folderId
+    password.folderId = folderId;
+    const updatedPassword = await this.passwordRepository.save(password);
+
+    return updatedPassword;
   }
 }

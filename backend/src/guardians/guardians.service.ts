@@ -1,50 +1,77 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateGuardianDto } from './dto/create-guardian.dto';
 import { UpdateGuardianDto } from './dto/update-guardian.dto';
+import { Guardian } from './entities/guardian.entity';
 
 @Injectable()
 export class GuardiansService {
-  findAll(userId: number) {
-    // TODO: Get all guardians where userId matches (either as guardian or guarded user)
-    // TODO: Return from database
-    return [
-      {
-        id: 1,
-        guardedUserId: 2,
-        userId: userId,
-        guardianKeyValue: 'unique_key_123',
-      },
-      {
-        id: 2,
-        guardedUserId: 3,
-        userId: userId,
-        guardianKeyValue: 'unique_key_456',
-      },
-    ];
+  constructor(
+    @InjectRepository(Guardian)
+    private readonly guardianRepository: Repository<Guardian>,
+  ) {}
+
+  async findAll(userId: number) {
+    // Get all guardians where userId is either the guardian or the guarded user
+    const guardians = await this.guardianRepository
+      .createQueryBuilder('guardian')
+      .where('guardian.userId = :userId', { userId })
+      .orWhere('guardian.guardedUserId = :userId', { userId })
+      .getMany();
+
+    return guardians;
   }
 
-  create(createGuardianDto: CreateGuardianDto, userId: number) {
-    // TODO: Validate that userId matches one of the users in the relationship
-    // TODO: Generate or validate guardianKeyValue
-    // TODO: Create guardian in database
-    // TODO: Throw BadRequestException if validation fails
-    return {
-      id: 3,
+  async create(createGuardianDto: CreateGuardianDto, userId: number) {
+    // Validate that the authenticated userId matches one of the users in the relationship
+    if (
+      createGuardianDto.userId !== userId &&
+      createGuardianDto.guardedUserId !== userId
+    ) {
+      throw new ForbiddenException(
+        'You can only create guardian relationships involving yourself',
+      );
+    }
+
+    // Validate that guardianKeyValue is provided
+    if (!createGuardianDto.guardianKeyValue) {
+      throw new BadRequestException('Guardian key value is required');
+    }
+
+    // Create guardian relationship
+    const guardian = this.guardianRepository.create({
       guardedUserId: createGuardianDto.guardedUserId,
       userId: createGuardianDto.userId,
       guardianKeyValue: createGuardianDto.guardianKeyValue,
-    };
+    });
+
+    const savedGuardian = await this.guardianRepository.save(guardian);
+
+    return savedGuardian;
   }
 
-  remove(id: number, userId: number) {
-    // TODO: Check authorization - user must be either guardian or guarded user
-    // TODO: Delete guardian from database
-    // TODO: Throw NotFoundException if not found or not authorized
-    return {
-      id: id,
-      guardedUserId: 2,
-      userId: userId,
-      guardianKeyValue: 'unique_key_123',
-    };
+  async remove(id: number, userId: number) {
+    const guardian = await this.guardianRepository.findOne({
+      where: { id },
+    });
+
+    if (!guardian) {
+      throw new NotFoundException('Guardian relationship not found');
+    }
+
+    // Check authorization - user must be either the guardian or the guarded user
+    if (guardian.userId !== userId && guardian.guardedUserId !== userId) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    await this.guardianRepository.remove(guardian);
+
+    return guardian;
   }
 }

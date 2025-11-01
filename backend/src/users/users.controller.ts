@@ -15,6 +15,7 @@ import type { Request } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginDto } from './dto/login.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
@@ -32,7 +33,7 @@ export class UsersController {
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   async login(
-    @Body() loginDto: { username: string; password: string },
+    @Body() loginDto: LoginDto,
     @Session() session: Record<string, any>,
   ) {
     const result = await this.usersService.login(loginDto);

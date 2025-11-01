@@ -1,72 +1,129 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { CreatePasswordDto } from './dto/create-password.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { Password } from './entities/password.entity';
 
 @Injectable()
 export class PasswordsService {
-  create(createPasswordDto: CreatePasswordDto, userId: number) {
-    // TODO: Validate that the userId matches the authenticated user
-    // TODO: Encrypt password before storing
-    // TODO: Store in database
-    // TODO: Throw BadRequestException if validation fails
-    return {
-      id: 123,
-      userId: userId,
+  constructor(
+    @InjectRepository(Password)
+    private readonly passwordRepository: Repository<Password>,
+  ) {}
+
+  async create(createPasswordDto: CreatePasswordDto, userId: number) {
+    // Encrypt password before storing (using bcrypt for consistency)
+    const saltRounds = 10;
+    const encryptedPassword = await bcrypt.hash(
+      createPasswordDto.password,
+      saltRounds,
+    );
+
+    // Create password entry
+    const passwordData: Partial<Password> = {
+      userId,
       folderId: createPasswordDto.folderId,
       name: createPasswordDto.name,
       username: createPasswordDto.username,
-      password: createPasswordDto.password,
-      url: createPasswordDto.url || null,
-      notes: createPasswordDto.notes || null,
+      password: encryptedPassword,
+      url: createPasswordDto.url,
+      notes: createPasswordDto.notes,
     };
+
+    const password = this.passwordRepository.create(passwordData);
+    const savedPassword = await this.passwordRepository.save(password);
+
+    return savedPassword;
   }
 
-  findOne(id: number, userId: number) {
-    // TODO: Check ownership - password must belong to userId
-    // TODO: Retrieve from database
-    // TODO: Throw NotFoundException if not found or not owned
-    return {
-      id: id,
-      userId: userId,
-      folderId: 1,
-      name: 'My Gmail',
-      username: 'john@gmail.com',
-      password: 'encrypted_password',
-      url: 'https://gmail.com',
-      notes: 'Personal email account',
-    };
+  async findOne(id: number, userId: number) {
+    const password = await this.passwordRepository.findOne({
+      where: { id },
+    });
+
+    if (!password) {
+      throw new NotFoundException('Password not found');
+    }
+
+    // Check ownership
+    if (password.userId !== userId) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    return password;
   }
 
-  update(id: number, updatePasswordDto: UpdatePasswordDto, userId: number) {
-    // TODO: Check ownership - password must belong to userId
-    // TODO: Encrypt password if updated
-    // TODO: Update in database
-    // TODO: Throw NotFoundException if not found or not owned
-    return {
-      id: id,
-      userId: userId,
-      folderId: 1,
-      name: updatePasswordDto.name || 'My Gmail',
-      username: updatePasswordDto.username || 'john@gmail.com',
-      password: updatePasswordDto.password || 'encrypted_password',
-      url: updatePasswordDto.url || 'https://gmail.com',
-      notes: updatePasswordDto.notes || 'Personal email account',
-    };
+  async update(
+    id: number,
+    updatePasswordDto: UpdatePasswordDto,
+    userId: number,
+  ) {
+    const password = await this.passwordRepository.findOne({
+      where: { id },
+    });
+
+    if (!password) {
+      throw new NotFoundException('Password not found');
+    }
+
+    // Check ownership
+    if (password.userId !== userId) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    // Update fields
+    if (updatePasswordDto.name !== undefined) {
+      password.name = updatePasswordDto.name;
+    }
+    if (updatePasswordDto.username !== undefined) {
+      password.username = updatePasswordDto.username;
+    }
+    if (updatePasswordDto.password !== undefined) {
+      // Encrypt new password
+      const saltRounds = 10;
+      password.password = await bcrypt.hash(
+        updatePasswordDto.password,
+        saltRounds,
+      );
+    }
+    if (updatePasswordDto.url !== undefined) {
+      password.url = updatePasswordDto.url;
+    }
+    if (updatePasswordDto.notes !== undefined) {
+      password.notes = updatePasswordDto.notes;
+    }
+    if (updatePasswordDto.folderId !== undefined) {
+      password.folderId = updatePasswordDto.folderId;
+    }
+
+    const updatedPassword = await this.passwordRepository.save(password);
+
+    return updatedPassword;
   }
 
-  remove(id: number, userId: number) {
-    // TODO: Check ownership - password must belong to userId
-    // TODO: Delete from database
-    // TODO: Throw NotFoundException if not found or not owned
-    return {
-      id: id,
-      userId: userId,
-      folderId: 1,
-      name: 'My Gmail',
-      username: 'john@gmail.com',
-      password: 'encrypted_password',
-      url: 'https://gmail.com',
-      notes: 'Personal email account',
-    };
+  async remove(id: number, userId: number) {
+    const password = await this.passwordRepository.findOne({
+      where: { id },
+    });
+
+    if (!password) {
+      throw new NotFoundException('Password not found');
+    }
+
+    // Check ownership
+    if (password.userId !== userId) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    await this.passwordRepository.remove(password);
+
+    return password;
   }
 }
