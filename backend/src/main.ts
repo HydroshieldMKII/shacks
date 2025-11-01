@@ -52,16 +52,47 @@ async function bootstrap() {
   // Configure Swagger
   const config = new DocumentBuilder()
     .setTitle('Shacks Password Manager API')
-    .setDescription('API documentation for Shacks password manager backend')
+    .setDescription(
+      `## Shacks API Documentation
+      
+A secure password manager backend with end-to-end encryption.
+
+### Features
+- 🔐 **User Authentication**: Session-based authentication with secure password hashing
+- 🔑 **Password Management**: Store and retrieve encrypted passwords with AES encryption
+- 📁 **Folder Organization**: Organize passwords into folders
+- 👥 **Guardian System**: Share encrypted recovery keys with trusted guardians
+
+### Authentication
+Most endpoints require authentication via session cookie. 
+1. Create an account using \`POST /users/signup\` or login with \`POST /users/login\`
+2. Session cookie will be automatically set
+3. Use "Authorize" button above to persist session across requests in Swagger UI
+
+### Encryption
+- Passwords are encrypted using AES with a combination of master key + user password
+- Decryption happens automatically when retrieving individual passwords
+- Guardian keys use cryptographically secure random generation
+      `,
+    )
     .setVersion('1.0')
-    .addTag('users', 'User authentication and management')
-    .addTag('passwords', 'Password vault operations')
-    .addTag('folders', 'Folder management')
-    .addTag('guardians', 'Guardian key management')
+    .setContact(
+      'Shacks Support',
+      'https://github.com/HydroshieldMKII/shacks',
+      'support@shacks.example.com',
+    )
+    .addTag('users', 'User authentication and account management')
+    .addTag('passwords', 'Encrypted password vault CRUD operations')
+    .addTag('folders', 'Organize passwords into folders (with CASCADE delete)')
+    .addTag(
+      'guardians',
+      'Guardian relationships for password recovery (key sharing)',
+    )
     .addCookieAuth('connect.sid', {
       type: 'apiKey',
       in: 'cookie',
       name: 'connect.sid',
+      description: 'Session cookie for authentication',
     })
     .build();
 
@@ -70,9 +101,23 @@ async function bootstrap() {
     swaggerOptions: {
       persistAuthorization: true,
       displayRequestDuration: true,
+      docExpansion: 'none',
+      filter: true,
+      showRequestHeaders: true,
+      syntaxHighlight: {
+        activate: true,
+        theme: 'monokai',
+      },
+      tryItOutEnabled: true,
     },
-    customSiteTitle: 'Shacks API Docs',
-    customCss: '.swagger-ui .topbar .download-url-wrapper { display: none }',
+    customSiteTitle: 'Shacks API Documentation',
+    customCss: `
+      .swagger-ui .topbar { display: none }
+      .swagger-ui .info { margin: 50px 0 }
+      .swagger-ui .info .title { font-size: 36px }
+      .swagger-ui .scheme-container { box-shadow: none; border-bottom: 1px solid #ddd }
+    `,
+    customfavIcon: 'https://nestjs.com/img/logo-small.svg',
   });
 
   await app.listen(process.env.PORT ?? 3000);
