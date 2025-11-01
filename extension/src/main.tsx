@@ -7,6 +7,7 @@ import Login from "./pages/login.tsx";
 import Signup from "./pages/signup.tsx";
 import PasswordDetail from "./pages/password-details.tsx";
 import PasswordList from "./pages/password-list.tsx";
+import Home from "./pages/home.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -14,6 +15,7 @@ createRoot(document.getElementById("root")!).render(
             <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+                <Route path="/home" element={<Home />} />
                 <Route path="/passwords">
                     <Route index element={<PasswordList />} />
                     <Route path=":id" element={<PasswordDetail />} />

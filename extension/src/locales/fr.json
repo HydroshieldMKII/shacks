@@ -12,9 +12,23 @@
   "login": "Se connecter",
   "signup": "Pas de compte ? Inscrivez-vous !",
   "signup_button": "S’inscrire",
-  "login_redirect": "Déjà un compte ? Connectez-vous !",
   "signup_action": "Créer un compte",
+  "login_redirect": "Déjà un compte ? Connectez-vous !",
   "back_to_login": "Déjà un compte ? Se connecter",
+  "home": {
+    "passwords": "Mots de passe",
+    "trusted": "Personnes de confiance",
+    "search_placeholder": "Rechercher...",
+    "add_password": "Ajouter un mot de passe",
+    "add_person": "Ajouter une personne",
+    "personal_accounts": "Comptes personnels",
+    "professional_accounts": "Comptes professionnels",
+    "no_results": "Aucun résultat"
+  },
+  "footer": {
+    "passwords": "Mots de passe",
+    "trusted": "Confiance"
+  },
   "errors": {
     "email_required": "Veuillez entrer un courriel.",
     "email_invalid": "Adresse courriel invalide.",
