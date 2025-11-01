@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Session,
 } from '@nestjs/common';
 import { PasswordsService } from './passwords.service';
 import { CreatePasswordDto } from './dto/create-password.dto';
@@ -23,8 +24,13 @@ export class PasswordsController {
   create(
     @Body() createPasswordDto: CreatePasswordDto,
     @CurrentUser() user: { id: number; username: string },
+    @Session() session: Record<string, any>,
   ) {
-    return this.passwordsService.create(createPasswordDto, user.id);
+    return this.passwordsService.create(
+      createPasswordDto,
+      user.id,
+      session.userPassword,
+    );
   }
 
   @Get(':id')
@@ -32,8 +38,9 @@ export class PasswordsController {
   findOne(
     @Param('id') id: string,
     @CurrentUser() user: { id: number; username: string },
+    @Session() session: Record<string, any>,
   ) {
-    return this.passwordsService.findOne(+id, user.id);
+    return this.passwordsService.findOne(+id, user.id, session.userPassword);
   }
 
   @Patch(':id')
@@ -42,8 +49,14 @@ export class PasswordsController {
     @Param('id') id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
     @CurrentUser() user: { id: number; username: string },
+    @Session() session: Record<string, any>,
   ) {
-    return this.passwordsService.update(+id, updatePasswordDto, user.id);
+    return this.passwordsService.update(
+      +id,
+      updatePasswordDto,
+      user.id,
+      session.userPassword,
+    );
   }
 
   @Delete(':id')

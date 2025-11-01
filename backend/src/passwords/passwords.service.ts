@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,10 +19,21 @@ export class PasswordsService {
     private readonly encryptionService: EncryptionService,
   ) {}
 
-  async create(createPasswordDto: CreatePasswordDto, userId: number) {
-    // Encrypt password using AES (reversible encryption for password manager)
+  async create(
+    createPasswordDto: CreatePasswordDto,
+    userId: number,
+    userPassword: string,
+  ) {
+    if (!userPassword) {
+      throw new BadRequestException(
+        'User password required for encryption',
+      );
+    }
+
+    // Encrypt password using AES with user's password + master key
     const encryptedPassword = this.encryptionService.encrypt(
       createPasswordDto.password,
+      userPassword,
     );
 
     // Create password entry
@@ -41,7 +53,7 @@ export class PasswordsService {
     return savedPassword;
   }
 
-  async findOne(id: number, userId: number) {
+  async findOne(id: number, userId: number, userPassword?: string) {
     const password = await this.passwordRepository.findOne({
       where: { id },
     });
@@ -55,6 +67,15 @@ export class PasswordsService {
       throw new ForbiddenException('Access denied');
     }
 
+    // Decrypt password if userPassword is provided
+    if (userPassword) {
+      const decryptedPassword = this.encryptionService.decrypt(
+        password.password,
+        userPassword,
+      );
+      return { ...password, password: decryptedPassword };
+    }
+
     return password;
   }
 
@@ -62,6 +83,7 @@ export class PasswordsService {
     id: number,
     updatePasswordDto: UpdatePasswordDto,
     userId: number,
+    userPassword?: string,
   ) {
     const password = await this.passwordRepository.findOne({
       where: { id },
@@ -84,9 +106,15 @@ export class PasswordsService {
       password.username = updatePasswordDto.username;
     }
     if (updatePasswordDto.password !== undefined) {
-      // Encrypt new password using AES
+      // Encrypt new password using AES with user's password
+      if (!userPassword) {
+        throw new BadRequestException(
+          'User password required for encryption',
+        );
+      }
       password.password = this.encryptionService.encrypt(
         updatePasswordDto.password,
+        userPassword,
       );
     }
     if (updatePasswordDto.url !== undefined) {
