@@ -6,5 +6,5 @@ export class Folder {
   id: number;
 
   @Column()
-  name: number;
+  name: string;
 }
