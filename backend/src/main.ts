@@ -18,7 +18,7 @@ async function bootstrap() {
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps or curl)
       if (!origin) return callback(null, true);
-      
+
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -50,7 +50,9 @@ async function bootstrap() {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-      sameSite: (process.env.NODE_ENV === 'production' ? 'none' : 'lax') as 'none' | 'lax', // 'none' for cross-site in production
+      sameSite: (process.env.NODE_ENV === 'production' ? 'none' : 'lax') as
+        | 'none'
+        | 'lax', // 'none' for cross-site in production
       domain: process.env.COOKIE_DOMAIN || undefined, // Set domain if needed (e.g., '.example.com')
       path: '/',
     },
