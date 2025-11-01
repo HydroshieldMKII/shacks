@@ -31,7 +31,7 @@ export class GuardiansService {
       .map((guardian) => ({
         id: guardian.id,
         userId: guardian.userId,
-        guardedUserId: guardian.guardedUserId,
+        guardedEmail: guardian.email,
         guardianKeyValue: guardian.guardianKeyValue, // Show key for people you protect
       }));
 
@@ -40,7 +40,7 @@ export class GuardiansService {
       .map((guardian) => ({
         id: guardian.id,
         userId: guardian.userId,
-        guardedUserId: guardian.guardedUserId,
+        guardedEmail: guardian.email,
         // Don't include guardianKeyValue for people protecting you
       }));
 
@@ -62,11 +62,12 @@ export class GuardiansService {
     }
 
     //Check if guarded is myself
-    if (createGuardianDto.userId === createGuardianDto.guardedUserId) {
+    if (userId === createGuardianDto.guardedEmail) {
       throw new BadRequestException('You cannot be your own guardian');
     }
 
     // TODO generate key here
+    createGuardianDto.guardianKeyValue = this.generateGuardianKey();
 
     // Create guardian relationship
     const guardian = this.guardianRepository.create({
