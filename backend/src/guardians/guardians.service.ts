@@ -57,7 +57,7 @@ export class GuardiansService {
     // Check if user is trying to guard themselves
     // Note: We can't check this directly since we need to look up the email
     // This check would require fetching the current user's email
-    
+
     // Generate guardian key
     const guardianKeyValue = this.generateGuardianKey();
 

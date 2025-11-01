@@ -31,6 +31,19 @@ export class PasswordsService {
       throw new BadRequestException('User password required for encryption');
     }
 
+    // If folderId is provided, validate that the folder exists and belongs to the user
+    if (createPasswordDto.folderId) {
+      const folder = await this.folderRepository.findOne({
+        where: { id: createPasswordDto.folderId, userId },
+      });
+
+      if (!folder) {
+        throw new BadRequestException(
+          'Folder not found or does not belong to you',
+        );
+      }
+    }
+
     // Store the original password before encryption
     const originalPassword = createPasswordDto.password;
 
