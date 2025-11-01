@@ -53,6 +53,15 @@ export class PasswordsService {
     return savedPassword;
   }
 
+  async findAll(userId: number) {
+    const passwords = await this.passwordRepository.find({
+      where: { userId },
+      order: { id: 'DESC' },
+    });
+
+    return passwords;
+  }
+
   async findOne(id: number, userId: number, userPassword?: string) {
     const password = await this.passwordRepository.findOne({
       where: { id },
