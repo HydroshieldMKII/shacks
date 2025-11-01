@@ -11,6 +11,7 @@ import { CreateGuardianDto } from './dto/create-guardian.dto';
 import { UpdateGuardianDto } from './dto/update-guardian.dto';
 import { Guardian } from './entities/guardian.entity';
 import { UsersService } from '../users/users.service';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class GuardiansService {
@@ -21,39 +22,38 @@ export class GuardiansService {
   ) {}
 
   async findAll(userId: number) {
-    // Get all guardians where userId is either the guardian or the guarded user
-    const guardians = await this.guardianRepository
+    // Get all guardians where current user is the guardian (protecting others)
+    const protecting = await this.guardianRepository
       .createQueryBuilder('guardian')
       .where('guardian.userId = :userId', { userId })
       .getMany();
 
-    // Split into two categories
-    const protecting = guardians
-      .filter((guardian) => guardian.userId === userId)
-      .map((guardian) => ({
+    // Get all guardians where current user is being protected (need to look up by email)
+    const user = await this.usersService.findById(userId);
+    const protectedBy = await this.guardianRepository
+      .createQueryBuilder('guardian')
+      .where('guardian.guardedEmail = :email', { email: user.email })
+      .getMany();
+
+    return {
+      protecting: protecting.map((guardian) => ({
         id: guardian.id,
         userId: guardian.userId,
         guardedEmail: guardian.guardedEmail,
         guardianKeyValue: guardian.guardianKeyValue, // Show key for people you protect
-      }));
-
-    const protectedBy = guardians
-      .filter((guardian) => guardian.userId !== userId)
-      .map((guardian) => ({
+      })),
+      protected: protectedBy.map((guardian) => ({
         id: guardian.id,
         userId: guardian.userId,
         guardedEmail: guardian.guardedEmail,
         // Don't include guardianKeyValue for people protecting you
-      }));
-
-    return {
-      protecting: protecting, // Users that the current user is protecting (with keys)
-      protected: protectedBy, // Users that are protecting the current user (without keys)
+      })),
     };
   }
 
   generateGuardianKey(): string {
-    return Math.random().toString(36).substring(2, 15);
+    // Use cryptographically secure random generator
+    return crypto.randomBytes(16).toString('hex');
   }
 
   async create(createGuardianDto: CreateGuardianDto, userEmail: string) {
@@ -67,9 +67,9 @@ export class GuardiansService {
       throw new UnauthorizedException('Authenticated user not found');
     }
 
-    // Resolve guarded user by email provided in body
+    // Verify guarded user exists
     const guardedUser = await this.usersService.findByEmail(
-      createGuardianDto.guardedUserEmail,
+      createGuardianDto.guardedEmail,
     );
     if (!guardedUser) {
       throw new NotFoundException('Guarded user not found');
@@ -80,8 +80,8 @@ export class GuardiansService {
 
     // Create guardian relationship between authUser and guardedUser
     const guardian = this.guardianRepository.create({
+      userId: authUser.id,
       guardedEmail: createGuardianDto.guardedEmail,
-      userId: userId,
       guardianKeyValue: guardianKeyValue,
     });
 

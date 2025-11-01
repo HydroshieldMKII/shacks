@@ -87,7 +87,17 @@ export class PasswordsService {
       order: { id: 'DESC' },
     });
 
-    // Group passwords by folder
+    // Group passwords by folderId using a Map for O(n) complexity
+    const passwordsByFolder = new Map<number | null, Password[]>();
+    passwords.forEach((password) => {
+      const folderId = password.folderId;
+      if (!passwordsByFolder.has(folderId)) {
+        passwordsByFolder.set(folderId, []);
+      }
+      passwordsByFolder.get(folderId)!.push(password);
+    });
+
+    // Build folders with their passwords
     const foldersWithPasswords: Array<{
       id: number | null;
       name: string;
@@ -97,15 +107,11 @@ export class PasswordsService {
       id: folder.id,
       name: folder.name,
       userId: folder.userId,
-      passwords: passwords.filter(
-        (password) => password.folderId === folder.id,
-      ),
+      passwords: passwordsByFolder.get(folder.id) || [],
     }));
 
     // Add a special folder for passwords without a folder (folderId is null)
-    const passwordsWithoutFolder = passwords.filter(
-      (password) => password.folderId === null,
-    );
+    const passwordsWithoutFolder = passwordsByFolder.get(null) || [];
 
     if (passwordsWithoutFolder.length > 0) {
       foldersWithPasswords.unshift({
