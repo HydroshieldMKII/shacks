@@ -5,9 +5,9 @@ export class Guardian {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // User who is being guarded
+  // User who is being guarded (by email)
   @Column()
-  guardedUserId: number;
+  guardedEmail: string;
 
   // User who is the guardian
   @Column()

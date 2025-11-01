@@ -11,6 +11,7 @@ import { CreateGuardianDto } from './dto/create-guardian.dto';
 import { UpdateGuardianDto } from './dto/update-guardian.dto';
 import { Guardian } from './entities/guardian.entity';
 import { UsersService } from '../users/users.service';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class GuardiansService {
@@ -21,14 +22,38 @@ export class GuardiansService {
   ) {}
 
   async findAll(userId: number) {
-    // Get all guardians where userId is either the guardian or the guarded user
-    const guardians = await this.guardianRepository
+    // Get all guardians where current user is the guardian (protecting others)
+    const protecting = await this.guardianRepository
       .createQueryBuilder('guardian')
       .where('guardian.userId = :userId', { userId })
-      .orWhere('guardian.guardedUserId = :userId', { userId })
       .getMany();
 
-    return guardians;
+    // Get all guardians where current user is being protected (need to look up by email)
+    const user = await this.usersService.findById(userId);
+    const protectedBy = await this.guardianRepository
+      .createQueryBuilder('guardian')
+      .where('guardian.guardedEmail = :email', { email: user.email })
+      .getMany();
+
+    return {
+      protecting: protecting.map((guardian) => ({
+        id: guardian.id,
+        userId: guardian.userId,
+        guardedEmail: guardian.guardedEmail,
+        guardianKeyValue: guardian.guardianKeyValue, // Show key for people you protect
+      })),
+      protected: protectedBy.map((guardian) => ({
+        id: guardian.id,
+        userId: guardian.userId,
+        guardedEmail: guardian.guardedEmail,
+        // Don't include guardianKeyValue for people protecting you
+      })),
+    };
+  }
+
+  generateGuardianKey(): string {
+    // Use cryptographically secure random generator
+    return crypto.randomBytes(16).toString('hex');
   }
 
   async create(createGuardianDto: CreateGuardianDto, userEmail: string) {
@@ -42,24 +67,22 @@ export class GuardiansService {
       throw new UnauthorizedException('Authenticated user not found');
     }
 
-    // Resolve guarded user by email provided in body
+    // Verify guarded user exists
     const guardedUser = await this.usersService.findByEmail(
-      createGuardianDto.guardedUserEmail,
+      createGuardianDto.guardedEmail,
     );
     if (!guardedUser) {
       throw new NotFoundException('Guarded user not found');
     }
 
-    // Validate that guardianKeyValue is provided
-    if (!createGuardianDto.guardianKeyValue) {
-      throw new BadRequestException('Guardian key value is required');
-    }
+    // Generate guardian key
+    const guardianKeyValue = this.generateGuardianKey();
 
     // Create guardian relationship between authUser and guardedUser
     const guardian = this.guardianRepository.create({
-      guardedUserId: guardedUser.id,
       userId: authUser.id,
-      guardianKeyValue: createGuardianDto.guardianKeyValue,
+      guardedEmail: createGuardianDto.guardedEmail,
+      guardianKeyValue: guardianKeyValue,
     });
 
     const savedGuardian = await this.guardianRepository.save(guardian);
@@ -76,8 +99,8 @@ export class GuardiansService {
       throw new NotFoundException('Guardian relationship not found');
     }
 
-    // Check authorization - user must be either the guardian or the guarded user
-    if (guardian.userId !== userId && guardian.guardedUserId !== userId) {
+    // Check authorization - user must be the guardian (only guardians can remove relationships)
+    if (guardian.userId !== userId) {
       throw new ForbiddenException('Access denied');
     }
 

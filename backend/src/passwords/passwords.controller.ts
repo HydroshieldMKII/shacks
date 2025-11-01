@@ -30,10 +30,11 @@ export class PasswordsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get all password entries for current user' })
+  @ApiOperation({ summary: 'Get all passwords grouped by folders' })
   @ApiResponse({
     status: 200,
-    description: 'Returns list of password entries (encrypted)',
+    description:
+      'Returns array of folders, each containing an array of password entries (encrypted)',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findAll(@CurrentUser() user: { id: number; username: string }) {

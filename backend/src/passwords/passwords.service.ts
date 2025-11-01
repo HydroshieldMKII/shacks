@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { CreatePasswordDto } from './dto/create-password.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Password } from './entities/password.entity';
+import { Folder } from '../folders/entities/folder.entity';
 import { EncryptionService } from '../common/services/encryption.service';
 
 @Injectable()
@@ -16,6 +17,8 @@ export class PasswordsService {
   constructor(
     @InjectRepository(Password)
     private readonly passwordRepository: Repository<Password>,
+    @InjectRepository(Folder)
+    private readonly folderRepository: Repository<Folder>,
     private readonly encryptionService: EncryptionService,
   ) {}
 
@@ -26,6 +29,19 @@ export class PasswordsService {
   ) {
     if (!userPassword) {
       throw new BadRequestException('User password required for encryption');
+    }
+
+    // If folderId is provided, validate that the folder exists and belongs to the user
+    if (createPasswordDto.folderId) {
+      const folder = await this.folderRepository.findOne({
+        where: { id: createPasswordDto.folderId, userId },
+      });
+
+      if (!folder) {
+        throw new BadRequestException(
+          'Folder not found or does not belong to you',
+        );
+      }
     }
 
     // Store the original password before encryption
@@ -59,12 +75,54 @@ export class PasswordsService {
   }
 
   async findAll(userId: number) {
+    // Get all folders for the user
+    const folders = await this.folderRepository.find({
+      where: { userId },
+      order: { id: 'ASC' },
+    });
+
+    // Get all passwords for the user
     const passwords = await this.passwordRepository.find({
       where: { userId },
       order: { id: 'DESC' },
     });
 
-    return passwords;
+    // Group passwords by folderId using a Map for O(n) complexity
+    const passwordsByFolder = new Map<number | null, Password[]>();
+    passwords.forEach((password) => {
+      const folderId = password.folderId;
+      if (!passwordsByFolder.has(folderId)) {
+        passwordsByFolder.set(folderId, []);
+      }
+      passwordsByFolder.get(folderId)!.push(password);
+    });
+
+    // Build folders with their passwords
+    const foldersWithPasswords: Array<{
+      id: number | null;
+      name: string;
+      userId: number;
+      passwords: Password[];
+    }> = folders.map((folder) => ({
+      id: folder.id,
+      name: folder.name,
+      userId: folder.userId,
+      passwords: passwordsByFolder.get(folder.id) || [],
+    }));
+
+    // Add a special folder for passwords without a folder (folderId is null)
+    const passwordsWithoutFolder = passwordsByFolder.get(null) || [];
+
+    if (passwordsWithoutFolder.length > 0) {
+      foldersWithPasswords.unshift({
+        id: null,
+        name: 'Uncategorized',
+        userId: userId,
+        passwords: passwordsWithoutFolder,
+      });
+    }
+
+    return foldersWithPasswords;
   }
 
   async findOne(id: number, userId: number, userPassword?: string) {
