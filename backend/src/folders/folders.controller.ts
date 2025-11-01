@@ -33,15 +33,6 @@ export class FoldersController {
     return this.foldersService.create(createFolderDto, user.id);
   }
 
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  findOne(
-    @Param('id') id: string,
-    @CurrentUser() user: { id: number; username: string },
-  ) {
-    return this.foldersService.findOne(+id, user.id);
-  }
-
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   update(
@@ -59,19 +50,5 @@ export class FoldersController {
     @CurrentUser() user: { id: number; username: string },
   ) {
     return this.foldersService.remove(+id, user.id);
-  }
-
-  @Post(':folderId/passwords/:passwordId')
-  @HttpCode(HttpStatus.OK)
-  addPasswordToFolder(
-    @Param('folderId') folderId: string,
-    @Param('passwordId') passwordId: string,
-    @CurrentUser() user: { id: number; username: string },
-  ) {
-    return this.foldersService.addPasswordToFolder(
-      +folderId,
-      +passwordId,
-      user.id,
-    );
   }
 }
