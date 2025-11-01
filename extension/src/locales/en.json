@@ -1,0 +1,9 @@
+{
+  "title": "Login",
+  "email": "Email address",
+  "email_hint": "Enter your login email.",
+  "password": "Password",
+  "password_hint": "Your password must be at least 8 characters long.",
+  "login": "Sign in",
+  "signup": "No account? Sign up!"
+}
