@@ -1,0 +1,38 @@
+// 🎨 Couleurs personnalisées
+$primary: #2ba84a;  // ton vert principal
+$success: #33c07a;
+$info: #0979b2;
+$secondary: #6c757d;
+$dark: #121212;     // gris très foncé (pas noir total)
+$light: #f8f9fa;
+$body-bg: #1b1b1b;  // fond global légèrement plus clair que $dark
+
+$theme-colors: (
+        "primary": $primary,
+        "success": $success,
+        "info": $info,
+        "secondary": $secondary,
+        "dark": $dark,
+        "light": $light
+);
+
+// 🧩 Import de Bootstrap APRÈS les overrides
+@import "bootstrap/scss/bootstrap";
+
+// ✨ Amélioration du contraste du texte et des placeholders
+body {
+  background-color: $body-bg !important;
+  color: $light !important;
+}
+
+input.form-control,
+textarea.form-control {
+  background-color: #222 !important;
+  color: $light !important;
+  border-color: #444 !important;
+}
+
+::placeholder {
+  color: rgba(255, 255, 255, 0.75) !important;
+  opacity: 1 !important; /* pour Safari */
+}
