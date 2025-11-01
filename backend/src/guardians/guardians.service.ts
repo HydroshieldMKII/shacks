@@ -68,7 +68,6 @@ export class GuardiansService {
 
     // TODO generate key here
 
-
     // Create guardian relationship
     const guardian = this.guardianRepository.create({
       guardedUserId: createGuardianDto.guardedUserId,

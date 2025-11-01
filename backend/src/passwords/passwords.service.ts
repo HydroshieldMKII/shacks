@@ -79,7 +79,9 @@ export class PasswordsService {
       id: folder.id,
       name: folder.name,
       userId: folder.userId,
-      passwords: passwords.filter((password) => password.folderId === folder.id),
+      passwords: passwords.filter(
+        (password) => password.folderId === folder.id,
+      ),
     }));
 
     // Add a special folder for passwords without a folder (folderId is null)
