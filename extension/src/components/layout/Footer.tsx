@@ -4,9 +4,10 @@ import { KeyFill, PeopleFill } from "react-bootstrap-icons";
 interface FooterProps {
     activeTab: "passwords" | "trusted";
     onChange: (tab: "passwords" | "trusted") => void;
+    t: Record<string, string>;
 }
 
-export function Footer({ activeTab, onChange }: FooterProps) {
+export function Footer({ activeTab, onChange, t }: FooterProps) {
     return (
         <footer
             className="border-top border-secondary bg-dark position-fixed bottom-0 start-0 end-0"
@@ -16,23 +17,23 @@ export function Footer({ activeTab, onChange }: FooterProps) {
                 <Button
                     variant="link"
                     className={`text-decoration-none d-flex flex-column align-items-center ${
-                        activeTab === "passwords" ? "text-success" : "text-secondary"
+                        activeTab === "passwords" ? "text-primary" : "text-secondary"
                     }`}
                     onClick={() => onChange("passwords")}
                 >
                     <KeyFill size={18} />
-                    <small>Mots de passe</small>
+                    <small>{t.passwords}</small>
                 </Button>
 
                 <Button
                     variant="link"
                     className={`text-decoration-none d-flex flex-column align-items-center ${
-                        activeTab === "trusted" ? "text-success" : "text-secondary"
+                        activeTab === "trusted" ? "text-primary" : "text-secondary"
                     }`}
                     onClick={() => onChange("trusted")}
                 >
                     <PeopleFill size={18} />
-                    <small>Confiance</small>
+                    <small>{t.trusted}</small>
                 </Button>
             </div>
         </footer>

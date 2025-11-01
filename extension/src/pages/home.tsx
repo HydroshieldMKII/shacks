@@ -1,11 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { locales, type LocaleKey } from "../locales";
 import { Header } from "../components/layout/Header";
-import { Footer } from "../components/layout/Footer"; // ✅ nouveau nom
+import { Footer } from "../components/layout/Footer";
 import { PasswordSection } from "../components/sections/PasswordSection";
 import { TrustedSection } from "../components/sections/TrustedSection";
 
 function Home() {
+    const [lang, setLang] = useState<LocaleKey>("fr");
     const [tab, setTab] = useState<"passwords" | "trusted">("passwords");
+
+    // ✅ Langue persistée dans localStorage
+    useEffect(() => {
+        const storedLang = localStorage.getItem("trust_lang");
+        if (storedLang === "fr" || storedLang === "en") {
+            setLang(storedLang);
+        } else {
+            const userLang = navigator.language.startsWith("fr") ? "fr" : "en";
+            setLang(userLang as LocaleKey);
+            localStorage.setItem("trust_lang", userLang);
+        }
+    }, []);
+
+    const toggleLang = () => {
+        const newLang = lang === "fr" ? "en" : "fr";
+        setLang(newLang);
+        localStorage.setItem("trust_lang", newLang);
+    };
+
+    const t = locales[lang];
 
     return (
         <div
@@ -17,23 +39,31 @@ function Home() {
                 overflow: "hidden",
             }}
         >
-            {/* 🔹 En-tête fixe */}
-            <Header title={tab === "passwords" ? "Mots de passe" : "Personnes de confiance"} />
+            <Header
+                title={tab === "passwords" ? t.home.passwords : t.home.trusted}
+                appName={t.app_name}
+                lang={lang}
+                onLangToggle={toggleLang}
+            />
 
-            {/* 🔹 Contenu principal */}
+            {/* ✅ plus de padding haut et bas */}
             <main
+                className="px-3"
                 style={{
-                    paddingTop: "7rem",
-                    paddingBottom: "5rem",
+                    paddingTop: "7.5rem", // espace sous le header
+                    paddingBottom: "5.5rem", // espace pour le footer
                     overflowY: "auto",
                     scrollbarWidth: "none",
                 }}
             >
-                {tab === "passwords" ? <PasswordSection /> : <TrustedSection />}
+                {tab === "passwords" ? (
+                    <PasswordSection t={t.home} />
+                ) : (
+                    <TrustedSection t={t.home} />
+                )}
             </main>
 
-            {/* 🔹 Pied de page fixe */}
-            <Footer activeTab={tab} onChange={setTab} />
+            <Footer activeTab={tab} onChange={setTab} t={t.footer} />
         </div>
     );
 }

@@ -6,49 +6,57 @@ import { locales } from "../locales";
 import type { LocaleKey } from "../locales";
 
 function Login() {
-    const [show_password, set_show_password] = useState(false);
-    const [lang, set_lang] = useState<LocaleKey>("fr");
-    const [errors, set_errors] = useState<{ email?: string; password?: string }>({});
+    const [showPassword, setShowPassword] = useState(false);
+    const [lang, setLang] = useState<LocaleKey>("fr");
+    const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
+    // ✅ Charger la langue depuis localStorage
     useEffect(() => {
-        const user_lang = navigator.language.startsWith("fr") ? "fr" : "en";
-        set_lang(user_lang as LocaleKey);
+        const storedLang = localStorage.getItem("trust_lang");
+        if (storedLang === "fr" || storedLang === "en") {
+            setLang(storedLang);
+        } else {
+            const userLang = navigator.language.startsWith("fr") ? "fr" : "en";
+            setLang(userLang as LocaleKey);
+            localStorage.setItem("trust_lang", userLang);
+        }
     }, []);
+
+    // ✅ Basculer la langue
+    const toggleLang = () => {
+        const newLang = lang === "fr" ? "en" : "fr";
+        setLang(newLang);
+        localStorage.setItem("trust_lang", newLang);
+    };
 
     const t = locales[lang];
 
-    const handle_submit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const new_errors: { email?: string; password?: string } = {};
-
         const form = e.target as HTMLFormElement;
-        const email_value = form.formEmail.value.trim();
-        const password_value = form.formPassword.value.trim();
+        const newErrors: typeof errors = {};
 
-        if (!email_value) {
-            new_errors.email = t.errors.email_required;
-        } else if (!/\S+@\S+\.\S+/.test(email_value)) {
-            new_errors.email = t.errors.email_invalid;
-        }
+        const email = form.formEmail.value.trim();
+        const password = form.formPassword.value.trim();
 
-        if (!password_value) {
-            new_errors.password = t.errors.password_required;
-        } else if (password_value.length < 8) {
-            new_errors.password = t.errors.password_length;
-        }
+        if (!email) newErrors.email = t.errors.email_required;
+        else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = t.errors.email_invalid;
 
-        set_errors(new_errors);
+        if (!password) newErrors.password = t.errors.password_required;
+        else if (password.length < 8) newErrors.password = t.errors.password_length;
+
+        setErrors(newErrors);
     };
 
     return (
         <div className="d-flex flex-column justify-content-center align-items-center bg-dark text-light vh-100 w-100 p-3">
             <div className="w-100" style={{ maxWidth: "360px" }}>
                 {/* App title */}
-                <h1 className="text-center mb-1 text-primary fw-bold fs-3">TRUST</h1>
+                <h1 className="text-center mb-1 text-primary fw-bold fs-3">{t.app_name}</h1>
                 {/* Page title */}
                 <h2 className="text-center mb-4 fw-semibold">{t.login_title}</h2>
 
-                <Form noValidate onSubmit={handle_submit}>
+                <Form noValidate onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="formEmail">
                         <Form.Label className="fw-semibold small">{t.email}</Form.Label>
                         <Form.Control
@@ -70,7 +78,7 @@ function Login() {
                         <Form.Label className="fw-semibold small">{t.password}</Form.Label>
                         <InputGroup size="sm">
                             <Form.Control
-                                type={show_password ? "text" : "password"}
+                                type={showPassword ? "text" : "password"}
                                 className={`bg-dark text-light border-secondary rounded-start-3 ${
                                     errors.password ? "is-invalid" : ""
                                 }`}
@@ -78,10 +86,10 @@ function Login() {
                             <Button
                                 variant="outline-secondary"
                                 type="button"
-                                onClick={() => set_show_password(!show_password)}
+                                onClick={() => setShowPassword(!showPassword)}
                                 className="rounded-end-3 border-secondary"
                             >
-                                {show_password ? <EyeSlashFill /> : <EyeFill />}
+                                {showPassword ? <EyeSlashFill /> : <EyeFill />}
                             </Button>
                         </InputGroup>
                         {errors.password ? (
@@ -110,7 +118,7 @@ function Login() {
                     <small
                         className="text-secondary"
                         style={{ cursor: "pointer", userSelect: "none" }}
-                        onClick={() => set_lang(lang === "fr" ? "en" : "fr")}
+                        onClick={toggleLang}
                     >
                         {lang === "fr" ? "FR | EN" : "EN | FR"}
                     </small>
