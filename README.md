@@ -33,7 +33,7 @@ Ce dépôt contient le code source, la documentation et des scripts pour exécut
 
 ## Stack technique
 
-* Langage principal : Type Script
+* Langage principal : TypeScript
 * Chiffrement : bcrypt
 * Stockage : SQLite (ORM)
 
