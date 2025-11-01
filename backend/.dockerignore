@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+dist
+.git
+.gitignore
+.env
+.env.*
+*.md
+test
+coverage
+.prettierrc
+eslint.config.mjs

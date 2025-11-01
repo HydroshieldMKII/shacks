@@ -24,7 +24,7 @@ import { Folder } from './folders/entities/folder.entity';
     }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'db.sqlite',
+      database: process.env.DATABASE_PATH || 'data/db.sqlite',
       entities: [User, Guardian, Password, Folder],
       synchronize: true,
     }),
