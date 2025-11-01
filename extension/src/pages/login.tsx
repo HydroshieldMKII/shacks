@@ -44,7 +44,7 @@ function Login() {
         <div className="d-flex flex-column justify-content-center align-items-center bg-dark text-light vh-100 w-100 p-3">
             <div className="w-100" style={{ maxWidth: "360px" }}>
                 {/* App title */}
-                <h1 className="text-center mb-1 text-success fw-bold fs-3">TRUST</h1>
+                <h1 className="text-center mb-1 text-primary fw-bold fs-3">TRUST</h1>
                 {/* Page title */}
                 <h2 className="text-center mb-4 fw-semibold">{t.login_title}</h2>
 

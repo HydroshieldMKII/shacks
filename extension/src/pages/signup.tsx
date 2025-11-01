@@ -43,7 +43,7 @@ function Signup() {
     return (
         <FormContainer>
             {/* 🔹 App title — en gros, avec marge haut/bas */}
-            <h1 className="text-center text-success fw-bold fs-3">TRUST</h1>
+            <h1 className="text-center text-primary fw-bold fs-3">TRUST</h1>
 
             {/* 🔹 Page title */}
             <h2 className="text-center mb-4 fw-semibold">{t.signup_title}</h2>
