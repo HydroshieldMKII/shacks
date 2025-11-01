@@ -28,6 +28,9 @@ export class PasswordsService {
       throw new BadRequestException('User password required for encryption');
     }
 
+    // Store the original password before encryption
+    const originalPassword = createPasswordDto.password;
+
     // Encrypt password using AES with user's password + master key
     const encryptedPassword = this.encryptionService.encrypt(
       createPasswordDto.password,
@@ -48,7 +51,11 @@ export class PasswordsService {
     const password = this.passwordRepository.create(passwordData);
     const savedPassword = await this.passwordRepository.save(password);
 
-    return savedPassword;
+    // Return the saved password with the original unencrypted password
+    return {
+      ...savedPassword,
+      password: originalPassword,
+    };
   }
 
   async findAll(userId: number) {
