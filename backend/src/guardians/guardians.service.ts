@@ -50,6 +50,13 @@ export class GuardiansService {
       throw new NotFoundException('Guarded user not found');
     }
 
+    // Prevent self-guardian relationships
+    if (authUser.id === guardedUser.id) {
+      throw new BadRequestException(
+        'Cannot create a guardian relationship with yourself',
+      );
+    }
+
     // Validate that guardianKeyValue is provided
     if (!createGuardianDto.guardianKeyValue) {
       throw new BadRequestException('Guardian key value is required');

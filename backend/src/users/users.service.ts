@@ -47,7 +47,10 @@ export class UsersService {
   async signup(createUserDto: CreateUserDto) {
     // Check if username or email already exists
     const existingUser = await this.userRepository.findOne({
-      where: [{ username: createUserDto.username }, { email: createUserDto.email }],
+      where: [
+        { username: createUserDto.username },
+        { email: createUserDto.email },
+      ],
     });
 
     if (existingUser) {
@@ -75,7 +78,11 @@ export class UsersService {
     const savedUser = await this.userRepository.save(user);
 
     return {
-      user: { id: savedUser.id, username: savedUser.username, email: savedUser.email },
+      user: {
+        id: savedUser.id,
+        username: savedUser.username,
+        email: savedUser.email,
+      },
     };
   }
 
