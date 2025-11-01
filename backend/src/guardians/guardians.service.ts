@@ -30,6 +30,10 @@ export class GuardiansService {
 
     // Get all guardians where current user is being protected (need to look up by email)
     const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User doesnt have an email');
+    }
+
     const protectedBy = await this.guardianRepository
       .createQueryBuilder('guardian')
       .where('guardian.guardedEmail = :email', { email: user.email })
