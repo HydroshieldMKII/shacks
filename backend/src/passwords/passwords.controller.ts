@@ -1,34 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { PasswordsService } from './passwords.service';
 import { CreatePasswordDto } from './dto/create-password.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller('passwords')
 export class PasswordsController {
   constructor(private readonly passwordsService: PasswordsService) {}
 
   @Post()
-  create(@Body() createPasswordDto: CreatePasswordDto) {
-    return this.passwordsService.create(createPasswordDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.passwordsService.findAll();
+  @HttpCode(HttpStatus.CREATED)
+  create(
+    @Body() createPasswordDto: CreatePasswordDto,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.passwordsService.create(createPasswordDto, user.id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.passwordsService.findOne(+id);
+  @HttpCode(HttpStatus.OK)
+  findOne(
+    @Param('id') id: string,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.passwordsService.findOne(+id, user.id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePasswordDto: UpdatePasswordDto) {
-    return this.passwordsService.update(+id, updatePasswordDto);
+  @HttpCode(HttpStatus.OK)
+  update(
+    @Param('id') id: string,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.passwordsService.update(+id, updatePasswordDto, user.id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.passwordsService.remove(+id);
+  @HttpCode(HttpStatus.OK)
+  remove(
+    @Param('id') id: string,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.passwordsService.remove(+id, user.id);
   }
 }
