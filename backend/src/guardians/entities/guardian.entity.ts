@@ -15,5 +15,5 @@ export class Guardian {
 
   // Unique key for social access with guarded user
   @Column()
-  guardianKey: string;
+  guardianKeyValue: string;
 }

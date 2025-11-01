@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -6,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { GuardiansModule } from './guardians/guardians.module';
 import { PasswordsModule } from './passwords/passwords.module';
 import { FoldersModule } from './folders/folders.module';
+import { AuthGuard } from './common/guards/auth.guard';
 
 // Entities
 import { User } from './users/entities/user.entity';
@@ -27,6 +29,12 @@ import { Folder } from './folders/entities/folder.entity';
     FoldersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}

@@ -1,34 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { GuardiansService } from './guardians.service';
 import { CreateGuardianDto } from './dto/create-guardian.dto';
 import { UpdateGuardianDto } from './dto/update-guardian.dto';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller('guardians')
 export class GuardiansController {
   constructor(private readonly guardiansService: GuardiansService) {}
 
-  @Post()
-  create(@Body() createGuardianDto: CreateGuardianDto) {
-    return this.guardiansService.create(createGuardianDto);
-  }
-
   @Get()
-  findAll() {
-    return this.guardiansService.findAll();
+  @HttpCode(HttpStatus.OK)
+  findAll(@CurrentUser() user: { id: number; username: string }) {
+    // Authentication is handled by AuthGuard
+    return this.guardiansService.findAll(user.id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.guardiansService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGuardianDto: UpdateGuardianDto) {
-    return this.guardiansService.update(+id, updateGuardianDto);
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  create(
+    @Body() createGuardianDto: CreateGuardianDto,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.guardiansService.create(createGuardianDto, user.id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.guardiansService.remove(+id);
+  @HttpCode(HttpStatus.OK)
+  remove(
+    @Param('id') id: string,
+    @CurrentUser() user: { id: number; username: string },
+  ) {
+    return this.guardiansService.remove(+id, user.id);
   }
 }
