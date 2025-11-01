@@ -40,18 +40,22 @@ export class UsersService {
     }
 
     return {
-      user: { id: user.id, username: user.username },
+      user: { id: user.id, username: user.username, email: user.email },
     };
   }
 
   async signup(createUserDto: CreateUserDto) {
-    // Check if username already exists
+    // Check if username or email already exists
     const existingUser = await this.userRepository.findOne({
-      where: { username: createUserDto.username },
+      where: [{ username: createUserDto.username }, { email: createUserDto.email }],
     });
 
     if (existingUser) {
-      throw new ConflictException('Username already exists');
+      // Provide a helpful message depending on conflict
+      if (existingUser.username === createUserDto.username) {
+        throw new ConflictException('Username already exists');
+      }
+      throw new ConflictException('Email already exists');
     }
 
     // Hash password
@@ -61,16 +65,17 @@ export class UsersService {
       saltRounds,
     );
 
-    // Create user
+    // Create user (store email as well)
     const user = this.userRepository.create({
       username: createUserDto.username,
+      email: createUserDto.email,
       password: hashedPassword,
     });
 
     const savedUser = await this.userRepository.save(user);
 
     return {
-      user: { id: savedUser.id, username: savedUser.username },
+      user: { id: savedUser.id, username: savedUser.username, email: savedUser.email },
     };
   }
 
@@ -80,5 +85,9 @@ export class UsersService {
 
   async findByUsername(username: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { username } });
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email } });
   }
 }
