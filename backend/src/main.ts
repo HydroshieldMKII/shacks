@@ -8,27 +8,12 @@ import cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Configure allowed origins for CORS
-  const allowedOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',')
-    : ['http://localhost:3000', 'http://localhost:5173'];
-
-  // Enable CORS with specific configuration
+  // DISABLE CORS COMPLETELY - Allow all origins
   app.enableCors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.warn(`CORS blocked origin: ${origin}`);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true, // Essential for cookies
+    origin: true, // Allow all origins
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Set-Cookie'],
     exposedHeaders: ['Set-Cookie'],
   });
 
@@ -40,23 +25,28 @@ async function bootstrap() {
     throw new Error('SESSION_SECRET environment variable is not set');
   }
 
-  // Configure session with production-ready settings
+  // Simplified session configuration for debugging
   const sessionConfig = {
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    name: 'connect.sid', // Explicitly set cookie name
+    name: 'connect.sid',
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-      sameSite: (process.env.NODE_ENV === 'production' ? 'none' : 'lax') as
-        | 'none'
-        | 'lax', // 'none' for cross-site in production
-      domain: process.env.COOKIE_DOMAIN || undefined, // Set domain if needed (e.g., '.example.com')
+      secure: false, // Disable secure flag for debugging
+      sameSite: 'lax' as 'lax', // Use lax instead of none
+      domain: process.env.COOKIE_DOMAIN || undefined,
       path: '/',
     },
   };
+
+  console.log('Session config:', {
+    cookieDomain: sessionConfig.cookie.domain,
+    secure: sessionConfig.cookie.secure,
+    sameSite: sessionConfig.cookie.sameSite,
+    httpOnly: sessionConfig.cookie.httpOnly,
+  });
 
   app.use(session(sessionConfig as any));
 
