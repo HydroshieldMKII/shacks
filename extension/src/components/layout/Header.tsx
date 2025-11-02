@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BoxArrowRight } from "react-bootstrap-icons";
 
 interface HeaderProps {
@@ -9,6 +10,21 @@ interface HeaderProps {
 }
 
 export function Header({ title, appName, lang, onLangToggle, onLogout }: HeaderProps) {
+    const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
+    const [isFloating, setIsFloating] = useState(false);
+
+    const moveButtonRandomly = () => {
+        // Get viewport dimensions
+        const maxX = window.innerWidth - 100; // Subtract button width
+        const maxY = window.innerHeight - 100; // Subtract button height
+        
+        // Generate random position
+        const randomX = Math.floor(Math.random() * maxX);
+        const randomY = Math.floor(Math.random() * maxY);
+        
+        setButtonPosition({ top: randomY, left: randomX });
+        setIsFloating(true);
+    };
     return (
         <header
             className="border-bottom border-secondary p-3 position-fixed top-0 start-0 end-0 bg-dark"
@@ -33,10 +49,17 @@ export function Header({ title, appName, lang, onLangToggle, onLogout }: HeaderP
                         style={{ 
                             backgroundColor: "transparent",
                             color: "#6c757d",
-                            transition: "color 0.2s ease",
-                            cursor: "pointer"
+                            transition: isFloating ? "all 0.8s ease" : "color 0.2s ease",
+                            cursor: "pointer",
+                            ...(isFloating && {
+                                position: "fixed",
+                                top: buttonPosition.top,
+                                left: buttonPosition.left,
+                                zIndex: 9999
+                            })
                         }}
                         onMouseEnter={(e) => {
+                            moveButtonRandomly();
                             e.currentTarget.style.color = "#dc3545";
                         }}
                         onMouseLeave={(e) => {
