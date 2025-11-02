@@ -365,13 +365,6 @@ export function EditPasswordPage() {
 
             <div className="d-flex flex-column gap-2">
                 <button 
-                    className="btn btn-primary"
-                    onClick={handleSave} 
-                    disabled={saving}
-                >
-                    {saving ? t.actions.saving : t.actions.save}
-                </button>
-                <button 
                     className={`btn ${autoFillSuccess ? 'btn-success' : 'btn-outline-primary'} d-flex align-items-center justify-content-center gap-2`}
                     onClick={handleAutoFill}
                     disabled={autoFilling}
