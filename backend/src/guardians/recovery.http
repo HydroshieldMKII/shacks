@@ -1,0 +1,167 @@
+### Configuration des Guardians
+
+### 1. Créer des utilisateurs de test
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+  "username": "alice",
+  "email": "alice@example.com",
+  "password": "AlicePassword123!"
+}
+
+###
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+  "username": "bob",
+  "email": "bob@example.com",
+  "password": "BobPassword123!"
+}
+
+###
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+  "username": "charlie",
+  "email": "charlie@example.com",
+  "password": "CharliePassword123!"
+}
+
+### 2. Bob se connecte
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+  "username": "bob",
+  "password": "BobPassword123!"
+}
+
+### 3. Bob devient guardian d'Alice
+POST http://localhost:3000/guardians
+Content-Type: application/json
+Cookie: connect.sid=<session-id-from-bob-login>
+
+{
+  "guardedEmail": "alice@example.com"
+}
+
+# Response: Sauvegarder le guardianKeyValue de Bob
+
+### 4. Charlie se connecte
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+  "username": "charlie",
+  "password": "CharliePassword123!"
+}
+
+### 5. Charlie devient guardian d'Alice
+POST http://localhost:3000/guardians
+Content-Type: application/json
+Cookie: connect.sid=<session-id-from-charlie-login>
+
+{
+  "guardedEmail": "alice@example.com"
+}
+
+# Response: Sauvegarder le guardianKeyValue de Charlie
+
+### Récupération de Compte
+
+### 6. Alice récupère son compte avec les clés de Bob et Charlie
+POST http://localhost:3000/guardians/recover
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "guardianKey1": "43bd34c1acd09d2d3e4acd8b2f12ec0d",
+  "guardianKey2": "9e98fc1ab9b49822c7c252fc45580713",
+  "newPassword": "AliceNewPassword456!"
+}
+
+### 7. Alice se connecte avec son nouveau mot de passe
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+  "username": "alice",
+  "password": "AliceNewPassword456!"
+}
+
+### Tests d'erreur
+
+### Erreur: Compte avec moins de 2 guardians
+POST http://localhost:3000/guardians/recover
+Content-Type: application/json
+
+{
+  "email": "bob@example.com",
+  "guardianKey1": "somekey",
+  "guardianKey2": "anotherkey",
+  "newPassword": "NewPassword123!"
+}
+
+# Expected: 400 - Account recovery requires at least 2 guardians
+
+###
+### Erreur: Clés invalides
+POST http://localhost:3000/guardians/recover
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "guardianKey1": "invalidkey1",
+  "guardianKey2": "invalidkey2",
+  "newPassword": "NewPassword123!"
+}
+
+# Expected: 401 - Invalid guardian keys provided
+
+###
+### Erreur: Même clé deux fois
+POST http://localhost:3000/guardians/recover
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "guardianKey1": "PUT_BOB_KEY_HERE",
+  "guardianKey2": "PUT_BOB_KEY_HERE",
+  "newPassword": "NewPassword123!"
+}
+
+# Expected: 400 - Both guardian keys must be different
+
+###
+### Erreur: Utilisateur inexistant
+POST http://localhost:3000/guardians/recover
+Content-Type: application/json
+
+{
+  "email": "nonexistent@example.com",
+  "guardianKey1": "somekey",
+  "guardianKey2": "anotherkey",
+  "newPassword": "NewPassword123!"
+}
+
+# Expected: 404 - User not found
+
+### Vérification des guardians d'Alice
+
+### Alice se connecte
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+  "username": "alice",
+  "password": "AlicePassword123!"
+}
+
+### Alice liste ses guardians
+GET http://localhost:3000/guardians
+Cookie: connect.sid=<session-id-from-alice-login>
+
+# Response: Voir la liste des guardians protégeant Alice

@@ -28,10 +28,11 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('Not authenticated');
     }
 
-    // Attach user info to request for controllers access
+    // Attach user info to request for controllers access (include email)
     request.user = {
       id: session.userId,
       username: session.username,
+      email: session.email,
     };
 
     return true;

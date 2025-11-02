@@ -5,8 +5,22 @@ import { ApiResponseModel } from './apiService.ts'
 
 class PasswordService {
 
-    async createPassword(title: string, username: string, password: string, url: string, notes?: string, folderId?: number): Promise<PasswordModel | ApiResponseModel> {
-        const response = await apiService.postRequest(`/passwords`, {}, { name: title, username: username, password: password, url: url, notes: notes, folderId: folderId });
+    async createPassword(title: string, username: string, password: string, url: string, notes?: string, folderId?: number | null): Promise<PasswordModel | ApiResponseModel> {
+        const requestBody: any = { 
+            name: title, 
+            username: username, 
+            password: password, 
+            url: url, 
+            notes: notes, 
+            folderId: folderId 
+        };
+        
+        // If folderId is undefined, explicitly set to null 
+        if (folderId === undefined) {
+            requestBody.folderId = null;
+        }
+        
+        const response = await apiService.postRequest(`/passwords`, {}, requestBody);
         if (response.status == 201) {
             return PasswordModel.fromAPI(response.data);
         } else {
@@ -32,8 +46,22 @@ class PasswordService {
         }
     }
 
-    async updatePassword(id: number, title: string, username: string, password: string, url: string, notes?: string, folderId?: number): Promise<PasswordModel | ApiResponseModel> {
-        const response = await apiService.patchRequest(`/passwords/${id}`, {}, { name: title, username: username, password: password, url: url, notes: notes, folderId: folderId });
+    async updatePassword(id: number, title: string, username: string, password: string, url: string, notes?: string, folderId?: number | null): Promise<PasswordModel | ApiResponseModel> {
+        const requestBody: any = { 
+            name: title, 
+            username: username, 
+            password: password, 
+            url: url, 
+            notes: notes, 
+            folderId: folderId 
+        };
+        
+        // If folderId is undefined, explicitly set to null to clear the folder
+        if (folderId === undefined) {
+            requestBody.folderId = null;
+        }
+        
+        const response = await apiService.patchRequest(`/passwords/${id}`, {}, requestBody);
         if (response.status == 200) {
             return PasswordModel.fromAPI(response.data);
         } else {
