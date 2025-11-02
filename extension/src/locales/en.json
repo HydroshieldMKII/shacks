@@ -18,6 +18,18 @@
   "login_redirect": "Already have an account? Log in!",
   "signup_loading": "Signing up...",
   "back_to_login": "Already have an account? Log in",
+  "recovery_title": "Account Recovery",
+  "recovery_email_label": "Lost Account Email",
+  "recovery_email_hint": "Enter the email of the account to recover.",
+  "recovery_key1_label": "Guardian Key #1",
+  "recovery_key1_hint": "Enter the first guardian key.",
+  "recovery_key2_label": "Guardian Key #2",
+  "recovery_key2_hint": "Enter the second guardian key.",
+  "recovery_new_password": "New Password",
+  "recovery_action": "Recover My Account",
+  "recovery_loading": "Recovering...",
+  "recovery_success": "Account recovered successfully! You can now log in.",
+  "recover_account": "Lost account? Recover it!",
   "home": {
     "passwords": "Passwords",
     "trusted": "Trusted People",
@@ -39,6 +51,9 @@
     "username_invalid": "Invalid username.",
     "password_required": "Please enter a password.",
     "password_length": "Password must be at least 8 characters long.",
-    "password_mismatch": "Passwords do not match."
+    "password_mismatch": "Passwords do not match.",
+    "guardian_key_required": "Please enter a guardian key.",
+    "guardian_keys_different": "Both guardian keys must be different.",
+    "recovery_failed": "Recovery failed. Check your keys and try again."
   }
 }
