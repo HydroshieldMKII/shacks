@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { locales } from "../locales";
 import type { LocaleKey } from "../locales";
 import authService from "../services/authService";
+import apiService from "../services/apiService";
 import { UserModel } from "../models/user.model";
 
 function Login() {
@@ -12,6 +13,8 @@ function Login() {
     const [lang, setLang] = useState<LocaleKey>("fr");
     const [errors, set_errors] = useState<{ username?: string; password?: string; general?: string }>({});
     const [is_loading, set_is_loading] = useState(false);
+    const [apiDomain, setApiDomain] = useState<string>("");
+    const [domainSaved, setDomainSaved] = useState<string | null>(null);
     const navigate = useNavigate();
 
     // ✅ Charger la langue depuis localStorage
@@ -25,6 +28,14 @@ function Login() {
             localStorage.setItem("trust_lang", userLang);
         }
         checkAuthentication();
+        // Load persisted API domain for the domain input
+        try {
+            const current = apiService.getBaseUrl();
+            setApiDomain(current);
+        } catch (e) {
+            const stored = localStorage.getItem('trust_api_domain');
+            if (stored) setApiDomain(stored);
+        }
     }, []);
 
     const checkAuthentication = async () => {
@@ -84,6 +95,25 @@ function Login() {
         }
     };
 
+    const saveApiDomain = () => {
+        try {
+            if (!apiDomain || !apiDomain.trim()) {
+                setDomainSaved('Invalid URL');
+                return;
+            }
+
+            // Let apiService normalize and persist the URL
+            apiService.setBaseUrl(apiDomain);
+            setApiDomain(apiService.getBaseUrl());
+            setDomainSaved('Saved');
+
+            // hide the message after a short delay
+            setTimeout(() => setDomainSaved(null), 2000);
+        } catch (error) {
+            setDomainSaved('Failed to save');
+        }
+    };
+
     return (
         <div className="d-flex flex-column justify-content-center align-items-center bg-dark text-light vh-100 w-100 p-3">
             <div className="w-100" style={{ maxWidth: "360px" }}>
@@ -105,6 +135,22 @@ function Login() {
                 )}
 
                 <Form noValidate onSubmit={handle_submit}>
+                    <Form.Group className="mb-3" controlId="formApiDomain">
+                        <Form.Label className="fw-semibold small">API Domain</Form.Label>
+                        <InputGroup size="sm">
+                            <Form.Control
+                                type="text"
+                                value={apiDomain}
+                                onChange={(e) => setApiDomain(e.target.value)}
+                                className="form-control-sm bg-dark text-light border-secondary"
+                            />
+                            <Button variant="outline-secondary" type="button" onClick={saveApiDomain} className="rounded-end-3 border-secondary">
+                                Save
+                            </Button>
+                        </InputGroup>
+                        <Form.Text className="text-light small">Change the API domain your extension uses. Example: https://api.trust.example/</Form.Text>
+                        {domainSaved && <div className="text-success small mt-1">{domainSaved}</div>}
+                    </Form.Group>
                     <Form.Group className="mb-3" controlId="formUsername">
                         <Form.Label className="fw-semibold small">{t.username}</Form.Label>
                         <Form.Control

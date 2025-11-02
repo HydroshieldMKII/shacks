@@ -129,12 +129,60 @@ function Recovery() {
                     navigate("/");
                 }, 2000);
             } else {
-                // Handle API error response
-                if (response.error) {
-                    set_errors({ general: response.error });
-                } else {
-                    set_errors({ general: t.errors.recovery_failed });
+                // Handle API error response: try to map field errors if provided by API
+                const newErrors: typeof errors = {};
+
+                // If API provided structured errors in response.data.errors (common pattern)
+                try {
+                    const data: any = response.data;
+                    if (data) {
+                        // If errors is an object with field keys
+                        if (data.errors && typeof data.errors === 'object') {
+                            for (const [k, v] of Object.entries(data.errors)) {
+                                const message = Array.isArray(v) ? v.join(' ') : String(v);
+                                // Map common API field names to our form fields
+                                switch (k) {
+                                    case 'guardianKey1':
+                                    case 'key1':
+                                        newErrors.key1 = message;
+                                        break;
+                                    case 'guardianKey2':
+                                    case 'key2':
+                                        newErrors.key2 = message;
+                                        break;
+                                    case 'newPassword':
+                                    case 'password':
+                                        newErrors.password = message;
+                                        break;
+                                    case 'confirm':
+                                        newErrors.confirm = message;
+                                        break;
+                                    case 'email':
+                                        newErrors.email = message;
+                                        break;
+                                    default:
+                                        // Fallback to general
+                                        newErrors.general = (newErrors.general ? newErrors.general + ' ' : '') + message;
+                                }
+                            }
+                        } else if (data.message) {
+                            newErrors.general = String(data.message);
+                        }
+                    }
+                } catch (e) {
+                    // ignore parsing issues
                 }
+
+                // If API provided a simple error string (response.error) and we don't have field errors yet
+                if (response.error && Object.keys(newErrors).length === 0) {
+                    newErrors.general = response.error;
+                }
+
+                if (Object.keys(newErrors).length === 0) {
+                    newErrors.general = t.errors.recovery_failed;
+                }
+
+                set_errors(newErrors);
             }
         } catch (error) {
             console.error("Recovery error:", error);

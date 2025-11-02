@@ -134,11 +134,44 @@ class CookieManager {
 }
 
 class ApiService {
-    private readonly BASE_URL = 'https://api-dev.trust.hydroshield.dev/';
-    private readonly cookieManager: CookieManager;
+    private baseUrl: string;
+    private cookieManager: CookieManager;
 
     constructor() {
-        this.cookieManager = new CookieManager(this.BASE_URL);
+        // Load persisted domain from localStorage if present, otherwise use default
+        const persisted = (typeof localStorage !== 'undefined') ? localStorage.getItem('trust_api_domain') : null;
+        this.baseUrl = this.normalizeBaseUrl(persisted || 'https://api-dev.trust.hydroshield.dev/');
+        this.cookieManager = new CookieManager(this.baseUrl);
+    }
+
+    getBaseUrl(): string {
+        return this.baseUrl;
+    }
+
+    setBaseUrl(url: string) {
+        const normalized = this.normalizeBaseUrl(url);
+        this.baseUrl = normalized;
+        // Persist for future sessions
+        try {
+            if (typeof localStorage !== 'undefined') localStorage.setItem('trust_api_domain', normalized);
+        } catch (e) {
+            console.warn('Failed to persist API domain to localStorage', e);
+        }
+
+        // Recreate cookie manager with new domain
+        this.cookieManager = new CookieManager(this.baseUrl);
+    }
+
+    // Ensure URL has protocol and trailing slash
+    private normalizeBaseUrl(url: string): string {
+        if (!url) return url;
+        let u = url.trim();
+        // If no protocol, default to https
+        if (!/^https?:\/\//i.test(u)) {
+            u = 'https://' + u;
+        }
+        if (!u.endsWith('/')) u = u + '/';
+        return u;
     }
 
     // Handle cookies from response headers
@@ -188,7 +221,7 @@ class ApiService {
                 headers['Cookie'] = `connect.sid=${sessionCookie}`;
             }
 
-            const response = await fetch(`${this.BASE_URL}${query}${params ? '?' + new URLSearchParams(params).toString() : ''}`, {
+            const response = await fetch(`${this.baseUrl}${query}${params ? '?' + new URLSearchParams(params).toString() : ''}`, {
                 method: 'GET',
                 credentials: 'include',
                 headers,
@@ -222,7 +255,7 @@ class ApiService {
                 headers['Cookie'] = `connect.sid=${sessionCookie}`;
             }
 
-            const response = await fetch(`${this.BASE_URL}${query}${params ? '?' + new URLSearchParams(params).toString() : ''}`, {
+            const response = await fetch(`${this.baseUrl}${query}${params ? '?' + new URLSearchParams(params).toString() : ''}`, {
                 method: 'POST',
                 credentials: 'include',
                 headers,
@@ -257,7 +290,7 @@ class ApiService {
                 headers['Cookie'] = `connect.sid=${sessionCookie}`;
             }
 
-            const response = await fetch(`${this.BASE_URL}${query}${params ? '?' + new URLSearchParams(params).toString() : ''}`, {
+            const response = await fetch(`${this.baseUrl}${query}${params ? '?' + new URLSearchParams(params).toString() : ''}`, {
                 method: 'DELETE',
                 credentials: 'include',
                 headers,
@@ -291,7 +324,7 @@ class ApiService {
                 headers['Cookie'] = `connect.sid=${sessionCookie}`;
             }
 
-            const response = await fetch(`${this.BASE_URL}${query}${params ? '?' + new URLSearchParams(params).toString() : ''}`, {
+            const response = await fetch(`${this.baseUrl}${query}${params ? '?' + new URLSearchParams(params).toString() : ''}`, {
                 method: 'PUT',
                 credentials: 'include',
                 headers,
@@ -326,7 +359,7 @@ class ApiService {
                 headers['Cookie'] = `connect.sid=${sessionCookie}`;
             }
 
-            const response = await fetch(`${this.BASE_URL}${query}${params ? '?' + new URLSearchParams(params).toString() : ''}`, {
+            const response = await fetch(`${this.baseUrl}${query}${params ? '?' + new URLSearchParams(params).toString() : ''}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers,
