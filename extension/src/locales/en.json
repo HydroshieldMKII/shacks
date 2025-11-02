@@ -17,7 +17,6 @@
   "login_redirect": "Already have an account? Log in!",
   "signup_action": "Create account",
   "signup_loading": "Signing up...",
-  "signup_action": "Create account",
   "back_to_login": "Already have an account? Log in",
   "errors": {
     "email_required": "Please enter an email.",
@@ -36,19 +35,14 @@
     "add_trusted": "Add trusted person",
     "personal_accounts": "Personal accounts",
     "professional_accounts": "Professional accounts",
-    "no_results": "No results"
+    "no_results": "No results",
+    "loading": "Loading...",
+    "no_trusted_found": "No trusted contacts found.",
+    "error_loading_trusted": "Failed to load trusted contacts.",
+    "login_required": "Please log in to view trusted contacts."
   },
   "footer": {
     "passwords": "Passwords",
     "trusted": "Trusted"
-  },
-  "errors": {
-    "email_required": "Please enter an email address.",
-    "email_invalid": "Invalid email address.",
-    "username_required": "Please enter a username.",
-    "username_invalid": "Invalid username.",
-    "password_required": "Please enter a password.",
-    "password_length": "Password must be at least 8 characters long.",
-    "password_mismatch": "Passwords do not match."
   }
 }

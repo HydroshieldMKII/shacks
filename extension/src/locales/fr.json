@@ -35,19 +35,14 @@
     "add_trusted": "Ajouter une personne de confiance",
     "personal_accounts": "Comptes personnels",
     "professional_accounts": "Comptes professionnels",
-    "no_results": "Aucun résultat"
+    "no_results": "Aucun résultat",
+    "loading": "Chargement...",
+    "no_trusted_found": "Aucune personne de confiance trouvée.",
+    "error_loading_trusted": "Erreur lors du chargement des personnes de confiance.",
+    "login_required": "Veuillez vous connecter pour voir les personnes de confiance."
   },
   "footer": {
     "passwords": "Mots de passe",
     "trusted": "Confiance"
-  },
-  "errors": {
-    "email_required": "Veuillez entrer un courriel.",
-    "email_invalid": "Adresse courriel invalide.",
-    "username_required": "Veuillez entrer un nom d'utilisateur.", 
-    "username_invalid": "Nom d'utilisateur invalide.",
-    "password_required": "Veuillez entrer un mot de passe.",
-    "password_length": "Le mot de passe doit contenir au moins 8 caractères.",
-    "password_mismatch": "Les mots de passe ne correspondent pas."
   }
 }
