@@ -36,6 +36,49 @@ export function PasswordSection({ t, onAddPassword, onEditPassword, onRefresh }:
         }
     }, [onRefresh]);
 
+    const handleAutoFill = async (passwordId: number) => {
+        try {
+            // Récupérer les détails complets du mot de passe
+            const passwordResult = await passwordService.getPassword(passwordId);
+            
+            if (passwordResult instanceof ApiResponseModel) {
+                return;
+            }
+
+            // Get the active tab
+            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            
+            if (!tab.id) {
+                return;
+            }
+
+            // Try to inject content script if not already present
+            try {
+                await chrome.scripting.executeScript({
+                    target: { tabId: tab.id },
+                    files: ['content.js']
+                });
+                await new Promise(resolve => setTimeout(resolve, 100));
+            } catch (injectError) {
+                // Content script already present or injection failed
+            }
+
+            // Send message to content script to fill the form
+            chrome.tabs.sendMessage(tab.id, {
+                action: 'fillForm',
+                data: {
+                    id: passwordResult.id,
+                    name: passwordResult.name,
+                    username: passwordResult.username,
+                    password: passwordResult.password,
+                    url: passwordResult.url
+                }
+            });
+        } catch (err) {
+            // Silent error handling
+        }
+    };
+
     const loadPasswords = async () => {
         try {
             setLoading(true);
@@ -146,6 +189,7 @@ export function PasswordSection({ t, onAddPassword, onEditPassword, onRefresh }:
                                         onEditPassword(password.id);
                                     }
                                 }}
+                                onAutoFill={password.id ? () => handleAutoFill(password.id!) : undefined}
                             />
                         ))}
                     </FolderElement>
