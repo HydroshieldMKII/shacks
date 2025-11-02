@@ -22,8 +22,8 @@ class AuthService {
         return response;
     }
 
-    async signup(username: string, password: string): Promise<UserModel | ApiResponseModel> {
-        const response = await apiService.postRequest('users/signup', {}, { username, password });
+    async signup(username: string, email: string, password: string): Promise<UserModel | ApiResponseModel> {
+        const response = await apiService.postRequest('users/signup', {}, { username, email, password });
         if (response.status == 201) {
             return UserModel.fromAPI(response.data);
         } else {
