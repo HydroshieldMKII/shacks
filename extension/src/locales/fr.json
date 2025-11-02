@@ -14,50 +14,55 @@
   "login": "Se connecter",
   "signup": "Pas de compte ? Inscrivez-vous !",
   "signup_button": "S’inscrire",
-  "login_redirect": "Déjà un compte ? Connectez-vous !",
   "signup_action": "Créer un compte",
+  "login_redirect": "Déjà un compte ? Connectez-vous !",
   "signup_loading": "Inscription...",
   "back_to_login": "Déjà un compte ? Se connecter",
-  "recovery_title": "Récupération de compte",
-  "recovery_email_label": "Email du compte perdu",
-  "recovery_email_hint": "Entrez l'email du compte à récupérer.",
-  "recovery_key1_label": "Clé du guardian #1",
-  "recovery_key1_hint": "Entrez la première clé guardian.",
-  "recovery_key2_label": "Clé du guardian #2",
-  "recovery_key2_hint": "Entrez la deuxième clé guardian.",
-  "recovery_new_password": "Nouveau mot de passe",
-  "recovery_action": "Récupérer mon compte",
-  "recovery_loading": "Récupération...",
-  "recovery_success": "Compte récupéré avec succès ! Vous pouvez maintenant vous connecter.",
-  "recover_account": "Compte perdu ? Récupérez-le !",
   "home": {
     "passwords": "Mots de passe",
     "trusted": "Personnes de confiance",
     "search_placeholder": "Rechercher...",
     "add_password": "Ajouter un mot de passe",
-    "add_trusted": "Ajouter une personne de confiance",
+    "edit_password": "Modifier un mot de passe",
+    "add_person": "Ajouter une personne de confiance",
+    "edit_person": "Modifier une personne de confiance",
     "personal_accounts": "Comptes personnels",
     "professional_accounts": "Comptes professionnels",
-    "no_results": "Aucun résultat",
-    "loading": "Chargement...",
-    "no_trusted_found": "Aucune personne de confiance trouvée.",
-    "error_loading_trusted": "Erreur lors du chargement des personnes de confiance.",
-    "login_required": "Veuillez vous connecter pour voir les personnes de confiance."
+    "no_results": "Aucun résultat"
   },
   "footer": {
     "passwords": "Mots de passe",
     "trusted": "Confiance"
   },
+  "delete_modal": {
+    "title": "ATTENTION",
+    "warning_password": "Vous êtes sur le point de supprimer votre sauvegarde de mot de passe pour « {{item}} ».",
+    "warning_trusted": "Vous êtes sur le point de supprimer votre personne de confiance « {{item}} ».",
+    "confirm": "Supprimer",
+    "cancel": "Annuler",
+    "question": "Voulez-vous vraiment le supprimer ?"
+  },
+  "trusted": {
+    "add_title": "Ajouter une personne de confiance",
+    "add_subtitle": "Choisissez une personne de confiance pour réinitialiser votre compte en cas d’oubli.",
+    "edit_title": "Modifier une personne de confiance",
+    "edit_subtitle": "Modifiez les informations de votre personne de confiance."
+  },
+  "passwords": {
+    "add_title": "Ajouter un mot de passe",
+    "add_subtitle": "Ajoutez un mot de passe du site de votre choix.",
+    "edit_title": "Modifier un mot de passe",
+    "edit_subtitle": "Modifiez les informations de votre mot de passe enregistré."
+  },
+  "note_label": "Note (optionnel)",
+  "note_hint": "Ajoutez un commentaire ou une précision si nécessaire.",
   "errors": {
     "email_required": "Veuillez entrer un courriel.",
     "email_invalid": "Adresse courriel invalide.",
-    "username_required": "Veuillez entrer un nom d'utilisateur.", 
+    "username_required": "Veuillez entrer un nom d'utilisateur.",
     "username_invalid": "Nom d'utilisateur invalide.",
     "password_required": "Veuillez entrer un mot de passe.",
     "password_length": "Le mot de passe doit contenir au moins 8 caractères.",
-    "password_mismatch": "Les mots de passe ne correspondent pas.",
-    "guardian_key_required": "Veuillez entrer une clé guardian.",
-    "guardian_keys_different": "Les deux clés guardian doivent être différentes.",
-    "recovery_failed": "La récupération a échoué. Vérifiez vos clés et réessayez."
+    "password_mismatch": "Les mots de passe ne correspondent pas."
   }
 }

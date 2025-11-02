@@ -3,7 +3,7 @@ import { Form, Button, Alert } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { locales } from "../locales";
 import type { LocaleKey } from "../locales";
-import { FormContainer } from "../components/form/FormContainer";
+import { FormContainer } from "../components/forms/FormContainer";
 import { InputText } from "../components/inputs/InputText";
 import { InputPassword } from "../components/inputs/InputPassword";
 import authService from "../services/authService";
