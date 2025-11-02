@@ -44,13 +44,12 @@ export class GuardiansService {
         id: guardian.id,
         userId: guardian.userId,
         guardedEmail: guardian.guardedEmail,
-        guardianKeyValue: guardian.guardianKeyValue, // Show key for people you protect
       })),
       protecting: protectedBy.map((guardian) => ({
         id: guardian.id,
         userId: guardian.userId,
         guardedEmail: guardian.guardedEmail,
-        // Don't include guardianKeyValue for people you protect
+        guardianKeyValue: guardian.guardianKeyValue, // Show key for people you protect
       })),
     };
   }
