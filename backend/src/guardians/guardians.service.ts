@@ -40,16 +40,16 @@ export class GuardiansService {
       .getMany();
 
     return {
-      protected: protecting.map((guardian) => ({
+      protecting: protecting.map((guardian) => ({
         id: guardian.id,
         userId: guardian.userId,
         guardedEmail: guardian.guardedEmail,
+        guardianKeyValue: guardian.guardianKeyValue,
       })),
-      protecting: protectedBy.map((guardian) => ({
+      protectedBy: protectedBy.map((guardian) => ({
         id: guardian.id,
         userId: guardian.userId,
         guardedEmail: guardian.guardedEmail,
-        guardianKeyValue: guardian.guardianKeyValue, // Show key for people you protect
       })),
     };
   }
@@ -70,19 +70,19 @@ export class GuardiansService {
       throw new UnauthorizedException('Authenticated user not found');
     }
 
-    // Verify guarded user exists
-    const guardedUser = await this.usersService.findByEmail(
+    // Verify guardian user exists (the person who will protect the authenticated user)
+    const guardianUser = await this.usersService.findByEmail(
       createGuardianDto.email,
     );
-    if (!guardedUser) {
-      throw new NotFoundException('Guarded user not found');
+    if (!guardianUser) {
+      throw new NotFoundException('Guardian user not found');
     }
 
     // Verify if it is not a duplicate guardian relationship
     const existingGuardian = await this.guardianRepository.findOne({
       where: {
-        userId: authUser.id,
-        guardedEmail: createGuardianDto.email,
+        userId: guardianUser.id,
+        guardedEmail: authUser.email,
       },
     });
     if (existingGuardian) {
@@ -94,10 +94,10 @@ export class GuardiansService {
     // Generate guardian key
     const guardianKeyValue = this.generateGuardianKey();
 
-    // Create guardian relationship between authUser and guardedUser
+    // Create guardian relationship: guardianUser protects authUser
     const guardian = this.guardianRepository.create({
-      userId: authUser.id,
-      guardedEmail: createGuardianDto.email,
+      userId: guardianUser.id,
+      guardedEmail: authUser.email,
       guardianKeyValue: guardianKeyValue,
     });
 
@@ -131,6 +131,11 @@ export class GuardiansService {
     guardianKey2: string,
     newPassword: string,
   ) {
+
+    console.log('Starting account recovery process for email:', email);
+    console.log('Using guardian keys:', guardianKey1, guardianKey2);
+    console.log('New password provided:', newPassword);
+
     // Find user by email
     const user = await this.usersService.findByEmail(email);
     if (!user) {
@@ -142,6 +147,9 @@ export class GuardiansService {
       .createQueryBuilder('guardian')
       .where('guardian.guardedEmail = :email', { email })
       .getMany();
+
+    //print all guardians table
+    console.log('All guardian in table:', await this.guardianRepository.find());
 
     if (guardians.length < 2) {
       throw new BadRequestException(
@@ -156,11 +164,6 @@ export class GuardiansService {
 
     if (validGuardians.length < 2) {
       throw new UnauthorizedException('Invalid guardian keys provided');
-    }
-
-    // Ensure the two keys are different (from different guardians)
-    if (guardianKey1 === guardianKey2) {
-      throw new BadRequestException('Both guardian keys must be different');
     }
 
     // Update user password
