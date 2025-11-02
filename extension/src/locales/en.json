@@ -51,7 +51,9 @@
     "add_title": "Add Trusted Person",
     "add_subtitle": "Add a new trusted contact",
     "edit_subtitle": "Edit trusted contact",
-    "invitation_explanation": "The guardian will receive an invitation to help protect your account. They can help you recover your password if needed."
+    "invitation_explanation": "The guardian will help protect your account. They can help you recover your password if needed.",
+    "people_i_protect": "People I Protect",
+    "people_protecting_me": "People Protecting Me"
   },
   "home": {
     "passwords": "Passwords",
@@ -115,6 +117,14 @@
   "actions": {
     "save": "Save",
     "saving": "Saving...",
-    "adding": "Adding..."
+    "adding": "Adding...",
+    "copy": "Copy",
+    "copied": "Copied",
+    "close": "Close"
+  },
+  "guardian_key": {
+    "title": "Guardian Key",
+    "message": "Share this key with {email} so they can recover their account in case of emergency.",
+    "security_notice": "Important: This key allows the guardian to recover the account in emergency situations. Keep it secure and only share it with trusted individuals."
   }
 }

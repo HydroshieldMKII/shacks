@@ -51,14 +51,16 @@
     "add_title": "Ajouter une personne de confiance",
     "add_subtitle": "Ajouter un nouveau contact de confiance",
     "edit_subtitle": "Modifier le contact de confiance",
-    "invitation_explanation": "La personne de confiance recevra une invitation pour aider à protéger votre compte. Elle peut vous aider à récupérer votre mot de passe si nécessaire."
+    "invitation_explanation": "La personne de confiance va aider à protéger votre compte. Elle peut vous aider à récupérer votre mot de passe si nécessaire.",
+    "people_i_protect": "Personnes que je protège",
+    "people_protecting_me": "Personnes qui me protègent"
   },
   "home": {
     "passwords": "Mots de passe",
     "trusted": "Personnes de confiance",
     "search_placeholder": "Rechercher...",
     "add_password": "Ajouter un mot de passe",
-    "add_trusted": "Ajouter une personne de confiance",
+    "add_trusted": "Ajouter une gardien",
     "personal_accounts": "Comptes personnels",
     "professional_accounts": "Comptes professionnels",
     "no_results": "Aucun résultat",
@@ -115,6 +117,14 @@
   "actions": {
     "save": "Enregistrer",
     "saving": "Enregistrement...",
-    "adding": "Ajout..."
+    "adding": "Ajout...",
+    "copy": "Copier",
+    "copied": "Copié",
+    "close": "Fermer"
+  },
+  "guardian_key": {
+    "title": "Clé de gardien",
+    "message": "Partagez cette clé avec {email} afin qu'ils puissent récupérer leur compte en cas d'urgence.",
+    "security_notice": "Important : Cette clé permet au gardien de récupérer le compte en situation d'urgence. Gardez-la sécurisée et partagez-la uniquement avec des personnes de confiance."
   }
 }

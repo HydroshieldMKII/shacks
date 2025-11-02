@@ -80,8 +80,10 @@ function Home() {
                 ) : (
                     <TrustedSection 
                         t={t.home} 
+                        trustedT={t.trusted}
+                        guardianKeyT={t.guardian_key}
+                        actionsT={t.actions}
                         onAddTrusted={() => navigate('/trusted/add')}
-                        onEditTrusted={(id: number) => navigate(`/trusted/edit/${id}`)}
                     />
                 )}
             </main>

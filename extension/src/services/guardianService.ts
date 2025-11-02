@@ -14,7 +14,7 @@ class GuardianService {
         if (response.status === 200) {
             const data = response.data;
             const protecting = data.protecting.map((item: any) => GuardianModel.fromAPI(item));
-            const protectedList = data.protected.map((item: any) => GuardianModel.fromAPI(item));
+            const protectedList = data.protectedBy.map((item: any) => GuardianModel.fromAPI(item));
             return {
                 protecting: protecting,
                 protected: protectedList
@@ -25,7 +25,7 @@ class GuardianService {
     }
 
     async createGuardian(email: string): Promise<GuardianModel | ApiResponseModel> {
-        const response = await apiService.postRequest(`/guardians`, { guardedEmail: email });
+        const response = await apiService.postRequest(`/guardians`, {}, { email: email });
         if (response.status === 201) {
             return GuardianModel.fromAPI(response.data);
         } else {

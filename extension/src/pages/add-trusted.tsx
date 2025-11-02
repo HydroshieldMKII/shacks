@@ -15,6 +15,14 @@ export function AddTrustedPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const handleEmailChange = (value: string) => {
+        setEmail(value);
+        // Clear error when user starts typing
+        if (error) {
+            setError(null);
+        }
+    };
+
     const handleSubmit = async () => {
         if (!email) {
             setError(t.errors.email_required_trusted);
@@ -51,18 +59,14 @@ export function AddTrustedPage() {
 
     return (
         <FormContainer title={t.trusted.add_title} showBackButton>
-            {error && (
-                <div className="alert alert-danger mb-3">
-                    {error}
-                </div>
-            )}
-
             <div className="mb-3">
-                                <EditFormField 
+                <EditFormField 
                     label={t.guardian_email} 
                     value={email} 
-                    onChange={setEmail}
+                    onChange={handleEmailChange}
                     placeholder="e.g., friend@example.com"
+                    error={error || undefined}
+                    required={true}
                 />
             </div>
 
