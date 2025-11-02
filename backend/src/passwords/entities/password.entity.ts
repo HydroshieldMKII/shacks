@@ -10,7 +10,7 @@ export class Password {
   userId: number;
 
   @Column({ nullable: true })
-  folderId: number;
+  folderId: number | null;
 
   @ManyToOne(() => Folder, (folder) => folder.passwords, {
     onDelete: 'CASCADE',

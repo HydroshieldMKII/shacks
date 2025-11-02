@@ -31,17 +31,22 @@ export class PasswordsService {
       throw new BadRequestException('User password required for encryption');
     }
 
-    // If folderId is provided, validate that the folder exists and belongs to the user
-    if (createPasswordDto.folderId) {
+    // Validate folderId if provided
+    let folderId: number | null = null;
+    
+    if (createPasswordDto.folderId !== undefined && createPasswordDto.folderId !== null) {
+      // Check if folder exists and belongs to the user
       const folder = await this.folderRepository.findOne({
         where: { id: createPasswordDto.folderId, userId },
       });
 
       if (!folder) {
         throw new BadRequestException(
-          'Folder not found or does not belong to you',
+          `Folder with ID ${createPasswordDto.folderId} not found or does not belong to you`,
         );
       }
+      
+      folderId = createPasswordDto.folderId;
     }
 
     // Store the original password before encryption
@@ -56,7 +61,7 @@ export class PasswordsService {
     // Create password entry
     const passwordData: Partial<Password> = {
       userId,
-      folderId: createPasswordDto.folderId,
+      folderId: folderId,
       name: createPasswordDto.name,
       username: createPasswordDto.username,
       password: encryptedPassword,
@@ -194,7 +199,23 @@ export class PasswordsService {
       password.notes = updatePasswordDto.notes;
     }
     if (updatePasswordDto.folderId !== undefined) {
-      password.folderId = updatePasswordDto.folderId;
+      // Validate folderId if provided (not null or undefined)
+      if (updatePasswordDto.folderId !== null) {
+        const folder = await this.folderRepository.findOne({
+          where: { id: updatePasswordDto.folderId, userId },
+        });
+
+        if (!folder) {
+          throw new BadRequestException(
+            `Folder with ID ${updatePasswordDto.folderId} not found or does not belong to you`,
+          );
+        }
+        
+        password.folderId = updatePasswordDto.folderId;
+      } else {
+        // Explicitly setting to null (uncategorized)
+        password.folderId = null;
+      }
     }
 
     const updatedPassword = await this.passwordRepository.save(password);
