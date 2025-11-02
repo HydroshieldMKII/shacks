@@ -18,15 +18,18 @@
   "signup_action": "Créer un compte",
   "signup_loading": "Inscription...",
   "back_to_login": "Déjà un compte ? Se connecter",
-  "errors": {
-    "email_required": "Veuillez entrer un courriel.",
-    "email_invalid": "Adresse courriel invalide.",
-    "username_required": "Veuillez entrer un nom d'utilisateur.",
-    "username_invalid": "Nom d'utilisateur invalide.",
-    "password_required": "Veuillez entrer un mot de passe.",
-    "password_length": "Le mot de passe doit contenir au moins 8 caractères.",
-    "password_mismatch": "Les mots de passe ne correspondent pas."
-  },
+  "recovery_title": "Récupération de compte",
+  "recovery_email_label": "Email du compte perdu",
+  "recovery_email_hint": "Entrez l'email du compte à récupérer.",
+  "recovery_key1_label": "Clé du guardian #1",
+  "recovery_key1_hint": "Entrez la première clé guardian.",
+  "recovery_key2_label": "Clé du guardian #2",
+  "recovery_key2_hint": "Entrez la deuxième clé guardian.",
+  "recovery_new_password": "Nouveau mot de passe",
+  "recovery_action": "Récupérer mon compte",
+  "recovery_loading": "Récupération...",
+  "recovery_success": "Compte récupéré avec succès ! Vous pouvez maintenant vous connecter.",
+  "recover_account": "Compte perdu ? Récupérez-le !",
   "home": {
     "passwords": "Mots de passe",
     "trusted": "Personnes de confiance",
@@ -44,5 +47,17 @@
   "footer": {
     "passwords": "Mots de passe",
     "trusted": "Confiance"
+  },
+  "errors": {
+    "email_required": "Veuillez entrer un courriel.",
+    "email_invalid": "Adresse courriel invalide.",
+    "username_required": "Veuillez entrer un nom d'utilisateur.", 
+    "username_invalid": "Nom d'utilisateur invalide.",
+    "password_required": "Veuillez entrer un mot de passe.",
+    "password_length": "Le mot de passe doit contenir au moins 8 caractères.",
+    "password_mismatch": "Les mots de passe ne correspondent pas.",
+    "guardian_key_required": "Veuillez entrer une clé guardian.",
+    "guardian_keys_different": "Les deux clés guardian doivent être différentes.",
+    "recovery_failed": "La récupération a échoué. Vérifiez vos clés et réessayez."
   }
 }

@@ -174,6 +174,12 @@ function Login() {
                     </Link>
                 </div>
 
+                <div className="text-center mt-2">
+                    <Link to="/recovery" className="text-primary text-decoration-underline small">
+                        {t.recover_account}
+                    </Link>
+                </div>
+
                 <div className="text-center mt-3">
                     <small
                         className="text-secondary"
