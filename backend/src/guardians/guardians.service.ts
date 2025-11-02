@@ -115,9 +115,15 @@ export class GuardiansService {
       throw new NotFoundException('Guardian relationship not found');
     }
 
-    // Check authorization - user must be the guardian (only guardians can remove relationships)
-    if (guardian.userId !== userId) {
-      throw new ForbiddenException('Access denied');
+    // Check authorization - must be the guardian or the guarded user
+    const guardedUser = await this.usersService.findByEmail(
+      guardian.guardedEmail,
+    );
+
+    if (guardian.userId !== userId && guardedUser?.id !== userId) {
+      throw new ForbiddenException(
+        'You are not authorized to remove this guardian relationship',
+      );
     }
 
     await this.guardianRepository.remove(guardian);
