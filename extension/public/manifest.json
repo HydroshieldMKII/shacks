@@ -15,15 +15,26 @@
         "48": "icon48.png",
         "128": "icon128.png"
     },
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content.js"],
+            "run_at": "document_end",
+            "all_frames": true
+        }
+    ],
     "permissions": [
         "scripting",
         "activeTab",
+        "tabs",
         "cookies",
         "storage"
     ],
     "host_permissions": [
-        "https://api-dev.trust.hydroshield.dev/*",
-        "http://localhost:*/*",
-        "https://localhost:*/*"
+        "<all_urls>"
     ]
 }
