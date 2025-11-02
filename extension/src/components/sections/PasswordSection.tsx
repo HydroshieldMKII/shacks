@@ -1,40 +1,100 @@
-import { useState } from "react";
-import { Button, Form, InputGroup, Collapse } from "react-bootstrap";
-import { Search, Plus, ChevronRight, ChevronDown } from "react-bootstrap-icons";
-
-interface PasswordCategory {
-    name: string;
-    items: string[];
-}
+import { useState, useEffect } from "react";
+import { Button, Form, InputGroup, Spinner, Alert } from "react-bootstrap";
+import { Search, Plus } from "react-bootstrap-icons";
+import { FolderElement } from "../elements/FolderElement";
+import { PasswordElement } from "../elements/PasswordElement";
+import passwordService from "../../services/passwordService";
+import { FolderModel } from "../../models/folder.model";
+import { ApiResponseModel } from "../../services/apiService";
 
 interface PasswordSectionProps {
-    t: Record<string, string>;
+    t: {
+        search_placeholder: string;
+        add_password: string;
+        loading?: string;
+        error?: string;
+        try_again?: string;
+        no_passwords_found?: string;
+        no_passwords_yet?: string;
+    };
+    onAddPassword?: () => void;
+    onViewPassword?: (passwordId: number) => void;
+    onEditPassword?: (passwordId: number) => void;
+    onRefresh?: (refreshFn: () => void) => void;
 }
 
-export function PasswordSection({ t }: PasswordSectionProps) {
+export function PasswordSection({ t, onAddPassword, onViewPassword, onEditPassword, onRefresh }: PasswordSectionProps) {
     const [search, setSearch] = useState("");
-    const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
+    const [folders, setFolders] = useState<FolderModel[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const passwords: PasswordCategory[] = [
-        {
-            name: t.personal_accounts,
-            items: ["YouTube", "Facebook", "Instagram"],
-        },
-        {
-            name: t.professional_accounts,
-            items: ["Courriel école", "Courriel travail"],
-        },
-    ];
+    useEffect(() => {
+        loadPasswords();
+        // Pass refresh function to parent if callback provided
+        if (onRefresh) {
+            onRefresh(refreshPasswords);
+        }
+    }, [onRefresh]);
 
-    const toggleFolder = (name: string) =>
-        setOpenFolders((prev) => ({ ...prev, [name]: !prev[name] }));
+    const loadPasswords = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const result = await passwordService.getPasswords();
+            
+            if (Array.isArray(result)) {
+                setFolders(result);
+            } else {
+                // Handle error response
+                const apiError = result as ApiResponseModel;
+                setError(apiError.error || 'Failed to load passwords');
+            }
+        } catch (err) {
+            setError('An unexpected error occurred');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    const filteredPasswords = (cat: PasswordCategory) =>
-        cat.items.filter((p) => p.toLowerCase().includes(search.toLowerCase()));
+    const filteredFolders = folders.map(folder => ({
+        ...folder,
+        passwords: folder.passwords.filter(password =>
+            password.name.toLowerCase().includes(search.toLowerCase()) ||
+            password.username.toLowerCase().includes(search.toLowerCase()) ||
+            (password.url && password.url.toLowerCase().includes(search.toLowerCase()))
+        )
+    })).filter(folder => folder.passwords.length > 0 || search === "");
+
+    // Expose refresh function for parent components
+    const refreshPasswords = () => {
+        loadPasswords();
+    };
+
+    if (loading) {
+        return (
+            <div className="d-flex flex-column align-items-center justify-content-center py-5">
+                <Spinner animation="border" variant="primary" />
+                <p className="mt-3 text-secondary">{t.loading || 'Loading passwords...'}</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <Alert variant="danger" className="mt-3">
+                <Alert.Heading>{t.error || 'Error'}</Alert.Heading>
+                <p>{error}</p>
+                <Button variant="outline-danger" size="sm" onClick={loadPasswords}>
+                    {t.try_again || 'Try Again'}
+                </Button>
+            </Alert>
+        );
+    }
 
     return (
         <>
-            {/* Barre de recherche + bouton + */}
+            {/* 🔍 Barre de recherche */}
             <div className="d-flex align-items-center gap-2 mb-4 mt-3">
                 <InputGroup className="flex-grow-1">
                     <Form.Control
@@ -48,6 +108,8 @@ export function PasswordSection({ t }: PasswordSectionProps) {
                         variant="outline-secondary"
                         className="border-secondary rounded-end-3 d-flex align-items-center justify-content-center"
                         style={{ width: "42px" }}
+                        onClick={() => setSearch("")}
+                        title={search ? "Clear search" : "Search"}
                     >
                         <Search size={16} />
                     </Button>
@@ -55,66 +117,46 @@ export function PasswordSection({ t }: PasswordSectionProps) {
 
                 <Button
                     variant="primary"
-                    className="rounded-circle d-flex align-items-center justify-content-center p-0"
-                    style={{
-                        width: "38px",
-                        height: "38px",
-                        flexShrink: 0,
-                    }}
+                    className="rounded-3 d-flex align-items-center justify-content-center p-0"
+                    style={{ width: "38px", height: "38px", minWidth: "38px", minHeight: "38px" }}
+                    onClick={onAddPassword}
+                    title={t.add_password}
                 >
                     <Plus size={20} />
                 </Button>
             </div>
 
-            {/* Dossiers */}
-            {passwords.map((cat, idx) => {
-                const isOpen = openFolders[cat.name];
-                const items = filteredPasswords(cat);
-                const visible = items.length > 0 || search === "";
-
-                return (
-                    <div key={idx} className="mb-3">
-                        {visible && (
-                            <div
-                                className="d-flex align-items-center justify-content-between pb-1 mb-2 user-select-none"
-                                style={{
-                                    cursor: "pointer",
-                                    borderBottom: "1px solid #333",
+            {/* 📂 Folders */}
+            {filteredFolders.length === 0 && search !== "" ? (
+                <div className="text-center py-5">
+                    <p className="text-secondary">{t.no_passwords_found || 'No passwords found matching your search.'}</p>
+                </div>
+            ) : filteredFolders.length === 0 ? (
+                <div className="text-center py-5">
+                    <p className="text-secondary">{t.no_passwords_yet || 'No passwords yet. Add your first password!'}</p>
+                </div>
+            ) : (
+                filteredFolders.map((folder) => (
+                    <FolderElement key={folder.id} name={folder.name} count={folder.passwords.length}>
+                        {folder.passwords.map((password) => (
+                            <PasswordElement 
+                                key={password.id || `${folder.id}-${password.name}`} 
+                                name={password.name}
+                                onView={() => {
+                                    if (password.id && onViewPassword) {
+                                        onViewPassword(password.id);
+                                    }
                                 }}
-                                onClick={() => toggleFolder(cat.name)}
-                            >
-                                <div className="fw-semibold small text-uppercase text-secondary">
-                                    {isOpen ? <ChevronDown /> : <ChevronRight />} {cat.name}
-                                </div>
-                                <span className="badge bg-secondary">{items.length}</span>
-                            </div>
-                        )}
-
-                        <Collapse in={isOpen}>
-                            <div>
-                                {items.map((p, i) => (
-                                    <div
-                                        key={i}
-                                        className="d-flex justify-content-between align-items-center rounded-3 bg-dark border border-secondary mb-2 px-3 py-2 user-select-none"
-                                        style={{
-                                            transition: "background-color 0.2s ease",
-                                            cursor: "pointer",
-                                        }}
-                                    >
-                                        <span>{p}</span>
-                                        <span className="text-secondary">&gt;</span>
-                                    </div>
-                                ))}
-                                {items.length === 0 && (
-                                    <div className="text-secondary small text-center mt-2">
-                                        {t.no_results}
-                                    </div>
-                                )}
-                            </div>
-                        </Collapse>
-                    </div>
-                );
-            })}
+                                onEdit={() => {
+                                    if (password.id && onEditPassword) {
+                                        onEditPassword(password.id);
+                                    }
+                                }}
+                            />
+                        ))}
+                    </FolderElement>
+                ))
+            )}
         </>
     );
 }

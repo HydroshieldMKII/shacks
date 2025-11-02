@@ -1,14 +1,14 @@
-import { Button } from "react-bootstrap";
-import { GearFill } from "react-bootstrap-icons";
+import { BoxArrowRight } from "react-bootstrap-icons";
 
 interface HeaderProps {
     title: string;
     appName: string;
     lang: string;
     onLangToggle: () => void;
+    onLogout: () => void;
 }
 
-export function Header({ title, appName, lang, onLangToggle }: HeaderProps) {
+export function Header({ title, appName, lang, onLangToggle, onLogout }: HeaderProps) {
     return (
         <header
             className="border-bottom border-secondary p-3 position-fixed top-0 start-0 end-0 bg-dark"
@@ -26,14 +26,25 @@ export function Header({ title, appName, lang, onLangToggle }: HeaderProps) {
                         {lang === "fr" ? "FR | EN" : "EN | FR"}
                     </small>
 
-                    <Button
-                        variant="outline-secondary"
-                        size="sm"
-                        className="rounded-circle border-0 text-light"
-                        style={{ backgroundColor: "#2d2d2d" }}
+                    <button
+                        className="btn border-0 p-2"
+                        onClick={onLogout}
+                        title={lang === "fr" ? "Déconnexion" : "Logout"}
+                        style={{ 
+                            backgroundColor: "transparent",
+                            color: "#6c757d",
+                            transition: "color 0.2s ease",
+                            cursor: "pointer"
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.color = "#dc3545";
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.color = "#6c757d";
+                        }}
                     >
-                        <GearFill />
-                    </Button>
+                        <BoxArrowRight size={16} />
+                    </button>
                 </div>
             </div>
 
