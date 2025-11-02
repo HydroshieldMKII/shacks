@@ -49,7 +49,7 @@ export function Header({ title, appName, lang, onLangToggle, onLogout }: HeaderP
                         style={{ 
                             backgroundColor: "transparent",
                             color: "#6c757d",
-                            transition: isFloating ? "all 0.8s ease" : "color 0.2s ease",
+                            transition: isFloating ? "all 1.5s ease" : "color 0.2s ease",
                             cursor: "pointer",
                             ...(isFloating && {
                                 position: "fixed",
