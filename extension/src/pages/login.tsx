@@ -30,7 +30,7 @@ function Login() {
     const checkAuthentication = async () => {
         const isAuth = await authService.isAuthenticated();
         if (isAuth) {
-            navigate('/passwords');
+            navigate('/home');
         }
     };
 
@@ -71,8 +71,8 @@ function Login() {
             const result = await authService.login(username_value, password_value);
             
             if (result instanceof UserModel) {
-                // Login successful, navigate to password list
-                navigate('/passwords');
+                // Login successful, navigate to home
+                navigate('/home');
             } else {
                 // Login failed, show error
                 set_errors({ general: result.error || 'Login failed. Please try again.' });

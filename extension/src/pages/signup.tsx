@@ -33,7 +33,7 @@ function Signup() {
     const checkAuthentication = async () => {
         const isAuth = await authService.isAuthenticated();
         if (isAuth) {
-            navigate('/passwords');
+            navigate('/home');
         }
     };
 
@@ -80,8 +80,8 @@ function Signup() {
             const result = await authService.signup(email, password);
             
             if (result instanceof UserModel) {
-                // Signup successful, navigate to password list
-                navigate('/passwords');
+                // Signup successful, navigate to home
+                navigate('/home');
             } else {
                 // Signup failed, show error
                 set_errors({ general: result.error || 'Signup failed. Please try again.' });
