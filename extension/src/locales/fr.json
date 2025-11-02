@@ -4,16 +4,18 @@
   "signup_title": "S’inscrire",
   "signup_intro": "Voici un gestionnaire de mot de passe basé sur des personnes de confiance. D'abord, créez un compte ou connectez-vous.",
   "email": "Courriel",
+  "username": "Nom d'utilisateur",
   "password": "Mot de passe",
   "confirm_password": "Confirmation du mot de passe",
   "email_hint": "Entrez votre adresse courriel.",
+  "username_hint": "Entrez votre nom d'utilisateur.",
   "password_hint": "Votre mot de passe doit contenir au moins 8 caractères.",
   "confirm_hint": "Répétez le mot de passe pour confirmation.",
   "login": "Se connecter",
   "signup": "Pas de compte ? Inscrivez-vous !",
   "signup_button": "S’inscrire",
   "login_redirect": "Déjà un compte ? Connectez-vous !",
-  "signup_action": "Créer un compte",
+  "signup_loading": "Inscription...",
   "back_to_login": "Déjà un compte ? Se connecter",
   "errors": {
     "email_required": "Veuillez entrer un courriel.",
@@ -35,5 +37,14 @@
   "footer": {
     "passwords": "Mots de passe",
     "trusted": "Confiance"
+  },
+  "errors": {
+    "email_required": "Veuillez entrer un courriel.",
+    "email_invalid": "Adresse courriel invalide.",
+    "username_required": "Veuillez entrer un nom d'utilisateur.", 
+    "username_invalid": "Nom d'utilisateur invalide.",
+    "password_required": "Veuillez entrer un mot de passe.",
+    "password_length": "Le mot de passe doit contenir au moins 8 caractères.",
+    "password_mismatch": "Les mots de passe ne correspondent pas."
   }
 }
