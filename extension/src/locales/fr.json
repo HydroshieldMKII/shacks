@@ -30,6 +30,18 @@
   "recovery_loading": "Récupération...",
   "recovery_success": "Compte récupéré avec succès ! Vous pouvez maintenant vous connecter.",
   "recover_account": "Compte perdu ? Récupérez-le !",
+  "note_label": "Note (optionnel)",
+  "note_hint": "Ajoutez une note personnelle pour cette entrée.",
+  "passwords": {
+    "add_title": "Ajouter un mot de passe",
+    "add_subtitle": "Ajouter une nouvelle entrée de mot de passe",
+    "edit_subtitle": "Modifier l'entrée de mot de passe"
+  },
+  "trusted": {
+    "add_title": "Ajouter une personne de confiance",
+    "add_subtitle": "Ajouter un nouveau contact de confiance",
+    "edit_subtitle": "Modifier le contact de confiance"
+  },
   "home": {
     "passwords": "Mots de passe",
     "trusted": "Personnes de confiance",
@@ -42,7 +54,8 @@
     "loading": "Chargement...",
     "no_trusted_found": "Aucune personne de confiance trouvée.",
     "error_loading_trusted": "Erreur lors du chargement des personnes de confiance.",
-    "login_required": "Veuillez vous connecter pour voir les personnes de confiance."
+    "login_required": "Veuillez vous connecter pour voir les personnes de confiance.",
+    "add_person": "Ajouter une personne"
   },
   "footer": {
     "passwords": "Mots de passe",

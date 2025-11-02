@@ -30,6 +30,18 @@
   "recovery_loading": "Recovering...",
   "recovery_success": "Account recovered successfully! You can now log in.",
   "recover_account": "Lost account? Recover it!",
+  "note_label": "Note (optional)",
+  "note_hint": "Add a personal note for this entry.",
+  "passwords": {
+    "add_title": "Add Password",
+    "add_subtitle": "Add a new password entry",
+    "edit_subtitle": "Edit password entry"
+  },
+  "trusted": {
+    "add_title": "Add Trusted Person",
+    "add_subtitle": "Add a new trusted contact",
+    "edit_subtitle": "Edit trusted contact"
+  },
   "home": {
     "passwords": "Passwords",
     "trusted": "Trusted People",
@@ -42,7 +54,8 @@
     "loading": "Loading...",
     "no_trusted_found": "No trusted contacts found.",
     "error_loading_trusted": "Failed to load trusted contacts.",
-    "login_required": "Please log in to view trusted contacts."
+    "login_required": "Please log in to view trusted contacts.",
+    "add_person": "Add person"
   },
   "footer": {
     "passwords": "Passwords",
