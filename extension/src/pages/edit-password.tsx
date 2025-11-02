@@ -240,7 +240,9 @@ export function EditPasswordPage() {
                 <EditFormField 
                     label={t.name} 
                     value={title} 
-                    onChange={setTitle} 
+                    onChange={handleTitleChange} 
+                    error={fieldErrors.title}
+                    required
                 />
             </div>
 
@@ -278,7 +280,9 @@ export function EditPasswordPage() {
                 <EditFormField 
                     label={t.username} 
                     value={username} 
-                    onChange={setUsername} 
+                    onChange={handleUsernameChange} 
+                    error={fieldErrors.username}
+                    required
                 />
             </div>
 
@@ -286,8 +290,10 @@ export function EditPasswordPage() {
                 <EditFormField 
                     label={t.password} 
                     value={password} 
-                    onChange={setPassword} 
+                    onChange={handlePasswordChange} 
                     type="password"
+                    error={fieldErrors.password}
+                    required
                 />
             </div>
 
