@@ -7,10 +7,13 @@
     },
     "permissions": [
         "scripting",
-        "activeTab"
+        "activeTab",
+        "cookies",
+        "storage"
     ],
     "host_permissions": [
-        "http://*/*",
-        "https://*/*"
+        "https://api-dev.trust.hydroshield.dev/*",
+        "http://localhost:*/*",
+        "https://localhost:*/*"
     ]
 }

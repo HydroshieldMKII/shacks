@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
 import { Form, Button, InputGroup } from "react-bootstrap";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { locales } from "../locales";
 import type { LocaleKey } from "../locales";
+import authService from "../services/authService";
+import { UserModel } from "../models/user.model";
 
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [lang, setLang] = useState<LocaleKey>("fr");
-    const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+    const [errors, set_errors] = useState<{ username?: string; password?: string; general?: string }>({});
+    const [is_loading, set_is_loading] = useState(false);
+    const navigate = useNavigate();
 
     // ✅ Charger la langue depuis localStorage
     useEffect(() => {
@@ -20,9 +24,16 @@ function Login() {
             setLang(userLang as LocaleKey);
             localStorage.setItem("trust_lang", userLang);
         }
+        checkAuthentication();
     }, []);
 
-    // ✅ Basculer la langue
+    const checkAuthentication = async () => {
+        const isAuth = await authService.isAuthenticated();
+        if (isAuth) {
+            navigate('/passwords');
+        }
+    };
+
     const toggleLang = () => {
         const newLang = lang === "fr" ? "en" : "fr";
         setLang(newLang);
@@ -31,21 +42,46 @@ function Login() {
 
     const t = locales[lang];
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handle_submit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const new_errors: { username?: string; password?: string; general?: string } = {};
+
         const form = e.target as HTMLFormElement;
-        const newErrors: typeof errors = {};
+        const username_value = form.formUsername.value.trim();
+        const password_value = form.formPassword.value.trim();
 
-        const email = form.formEmail.value.trim();
-        const password = form.formPassword.value.trim();
+        if (!username_value) {
+            new_errors.username = t.errors.username_required;
+        }
 
-        if (!email) newErrors.email = t.errors.email_required;
-        else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = t.errors.email_invalid;
+        if (!password_value) new_errors.password = t.errors.password_required;
+        else if (password_value.length < 8) new_errors.password = t.errors.password_length;
 
-        if (!password) newErrors.password = t.errors.password_required;
-        else if (password.length < 8) newErrors.password = t.errors.password_length;
+        // If there are validation errors, don't proceed
+        if (Object.keys(new_errors).length > 0) {
+            set_errors(new_errors);
+            return;
+        }
 
-        setErrors(newErrors);
+        // Clear errors and start loading
+        set_errors({});
+        set_is_loading(true);
+
+        try {
+            const result = await authService.login(username_value, password_value);
+            
+            if (result instanceof UserModel) {
+                // Login successful, navigate to password list
+                navigate('/passwords');
+            } else {
+                // Login failed, show error
+                set_errors({ general: result.error || 'Login failed. Please try again.' });
+            }
+        } catch (error) {
+            set_errors({ general: 'An unexpected error occurred. Please try again.' });
+        } finally {
+            set_is_loading(false);
+        }
     };
 
     return (
@@ -56,21 +92,33 @@ function Login() {
                 {/* Page title */}
                 <h2 className="text-center mb-4 fw-semibold">{t.login_title}</h2>
 
-                <Form noValidate onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3" controlId="formEmail">
-                        <Form.Label className="fw-semibold small">{t.email}</Form.Label>
+                {errors.general && (
+                    <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                        <small>{errors.general}</small>
+                        <button
+                            type="button"
+                            className="btn-close btn-close-white"
+                            onClick={() => set_errors({ ...errors, general: undefined })}
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                )}
+
+                <Form noValidate onSubmit={handle_submit}>
+                    <Form.Group className="mb-3" controlId="formUsername">
+                        <Form.Label className="fw-semibold small">{t.username}</Form.Label>
                         <Form.Control
-                            type="email"
+                            type="text"
                             className={`form-control-sm bg-dark text-light border-secondary ${
-                                errors.email ? "is-invalid" : ""
+                                errors.username ? "is-invalid" : ""
                             }`}
                         />
-                        {errors.email ? (
+                        {errors.username ? (
                             <Form.Control.Feedback type="invalid" className="text-danger small">
-                                {errors.email}
+                                {errors.username}
                             </Form.Control.Feedback>
                         ) : (
-                            <Form.Text className="text-secondary small">{t.email_hint}</Form.Text>
+                            <Form.Text className="text-secondary small">{t.username_hint}</Form.Text>
                         )}
                     </Form.Group>
 
@@ -102,8 +150,20 @@ function Login() {
                     </Form.Group>
 
                     <div className="d-grid">
-                        <Button variant="primary" type="submit" className="rounded-3 fw-semibold btn-sm">
-                            {t.login}
+                        <Button 
+                            variant="primary" 
+                            type="submit" 
+                            className="rounded-3 fw-semibold btn-sm"
+                            disabled={is_loading}
+                        >
+                            {is_loading ? (
+                                <>
+                                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    {lang === 'fr' ? 'Connexion...' : 'Logging in...'}
+                                </>
+                            ) : (
+                                t.login
+                            )}
                         </Button>
                     </div>
                 </Form>

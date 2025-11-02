@@ -4,9 +4,11 @@
   "signup_title": "Sign Up",
   "signup_intro": "This is a password manager based on trusted people. First, create an account or log in.",
   "email": "Email",
+  "username": "Username", 
   "password": "Password",
   "confirm_password": "Confirm Password",
   "email_hint": "Enter your email address.",
+  "username_hint": "Enter your username.",
   "password_hint": "Your password must be at least 8 characters long.",
   "confirm_hint": "Repeat the password for confirmation.",
   "login": "Log In",
@@ -14,6 +16,7 @@
   "signup_button": "Sign Up",
   "signup_action": "Create Account",
   "login_redirect": "Already have an account? Log in!",
+  "signup_loading": "Signing up...",
   "back_to_login": "Already have an account? Log in",
   "home": {
     "passwords": "Passwords",
@@ -32,6 +35,8 @@
   "errors": {
     "email_required": "Please enter an email address.",
     "email_invalid": "Invalid email address.",
+    "username_required": "Please enter a username.",
+    "username_invalid": "Invalid username.",
     "password_required": "Please enter a password.",
     "password_length": "Password must be at least 8 characters long.",
     "password_mismatch": "Passwords do not match."

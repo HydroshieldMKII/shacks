@@ -1,4 +1,5 @@
 export class PasswordModel {
+    id?: number;
     folderId: number | null;
     name: string;
     username: string;
@@ -6,7 +7,8 @@ export class PasswordModel {
     url?: string;
     notes?: string;
 
-    constructor(folderId: number | null, name: string, username: string, password: string, url?: string, notes?: string) {
+    constructor(id: number | undefined, folderId: number | null, name: string, username: string, password: string, url?: string, notes?: string) {
+        this.id = id;
         this.folderId = folderId;
         this.name = name;
         this.username = username;
@@ -17,6 +19,7 @@ export class PasswordModel {
 
     static fromAPI(data: any): PasswordModel {
         return new PasswordModel(
+            data.id,
             data.folderId,
             data.name,
             data.username,
