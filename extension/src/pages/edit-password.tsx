@@ -29,6 +29,13 @@ export function EditPasswordPage() {
     const [existingFolders, setExistingFolders] = useState<FolderModel[]>([]);
     const [autoFilling, setAutoFilling] = useState(false);
     const [autoFillSuccess, setAutoFillSuccess] = useState(false);
+    
+    // Field-specific errors
+    const [fieldErrors, setFieldErrors] = useState<{
+        title?: string;
+        username?: string;
+        password?: string;
+    }>({});
 
     // Load existing folders and password data
     useEffect(() => {
@@ -45,7 +52,7 @@ export function EditPasswordPage() {
                     const passwordResult = await passwordService.getPassword(parseInt(id));
                     
                     if (passwordResult instanceof ApiResponseModel) {
-                        setError(passwordResult.error || "Failed to load password");
+                        setError(passwordResult.error || t.home.error_load_password);
                     } else {
                         // PasswordModel
                         setTitle(passwordResult.name);
@@ -93,7 +100,7 @@ export function EditPasswordPage() {
         try {
             const result = await folderService.createFolder(name.trim());
             if (result instanceof ApiResponseModel) {
-                throw new Error(result.error || "Failed to create folder");
+                throw new Error(result.error || t.home.error_create_folder);
             } else {
                 // Add to existing folders list for future reference
                 setExistingFolders(prev => [...prev, result]);
@@ -105,14 +112,53 @@ export function EditPasswordPage() {
         }
     };
 
+    const validateFields = () => {
+        const errors: { title?: string; username?: string; password?: string } = {};
+        
+        if (!title.trim()) {
+            errors.title = t.errors.title_required;
+        }
+        if (!username.trim()) {
+            errors.username = t.errors.username_required;
+        }
+        if (!password.trim()) {
+            errors.password = t.errors.password_required;
+        }
+        
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    // Clear field error when user starts typing
+    const handleTitleChange = (value: string) => {
+        setTitle(value);
+        if (fieldErrors.title) {
+            setFieldErrors(prev => ({ ...prev, title: undefined }));
+        }
+    };
+
+    const handleUsernameChange = (value: string) => {
+        setUsername(value);
+        if (fieldErrors.username) {
+            setFieldErrors(prev => ({ ...prev, username: undefined }));
+        }
+    };
+
+    const handlePasswordChange = (value: string) => {
+        setPassword(value);
+        if (fieldErrors.password) {
+            setFieldErrors(prev => ({ ...prev, password: undefined }));
+        }
+    };
+
     const handleSave = async () => {
-        if (!id || !title || !username || !password) {
-            setError("All required fields must be filled");
+        if (!id || !validateFields()) {
             return;
         }
 
         setSaving(true);
         setError(null);
+        setFieldErrors({});
 
         try {
             // Get or create folder ID from folder name
@@ -136,7 +182,7 @@ export function EditPasswordPage() {
             );
 
             if (result instanceof ApiResponseModel) {
-                setError(result.error || "Failed to update password");
+                setError(result.error || t.home.error_update_password);
             } else {
                 navigate("/home");
             }
@@ -157,7 +203,7 @@ export function EditPasswordPage() {
             const result = await passwordService.deletePassword(parseInt(id));
             
             if (result instanceof ApiResponseModel) {
-                setError(result.error || "Failed to delete password");
+                setError(result.error || t.home.error_delete_password);
             } else {
                 navigate("/home");
             }
@@ -248,15 +294,17 @@ export function EditPasswordPage() {
         <FormContainer title={t.passwords.edit_subtitle} showBackButton>
             <div className="mb-3">
                 <EditFormField 
-                    label="Name" 
+                    label={t.name} 
                     value={title} 
-                    onChange={setTitle} 
+                    onChange={handleTitleChange} 
+                    error={fieldErrors.title}
+                    required
                 />
             </div>
 
             <div className="mb-3">
                 <EditFormField 
-                    label="URL" 
+                    label={t.url} 
                     value={url} 
                     onChange={setUrl} 
                 />
@@ -264,7 +312,7 @@ export function EditPasswordPage() {
 
             <div className="mb-3">
                 <div className="mb-2">
-                    <label className="form-label text-light">Folder Name (optional)</label>
+                    <label className="form-label text-light">{t.folder_name_optional}</label>
                 </div>
                 <input
                     className="form-control bg-dark text-light border-secondary"
@@ -280,7 +328,7 @@ export function EditPasswordPage() {
                     ))}
                 </datalist>
                 <div className="form-text text-light small">
-                    Enter folder name to organize this password. Will create folder if it doesn't exist.
+                    {t.folder_name_hint}
                 </div>
             </div>
 
@@ -288,7 +336,9 @@ export function EditPasswordPage() {
                 <EditFormField 
                     label={t.username} 
                     value={username} 
-                    onChange={setUsername} 
+                    onChange={handleUsernameChange} 
+                    error={fieldErrors.username}
+                    required
                 />
             </div>
 
@@ -296,8 +346,10 @@ export function EditPasswordPage() {
                 <EditFormField 
                     label={t.password} 
                     value={password} 
-                    onChange={setPassword} 
+                    onChange={handlePasswordChange} 
                     type="password"
+                    error={fieldErrors.password}
+                    required
                 />
             </div>
 
@@ -312,7 +364,13 @@ export function EditPasswordPage() {
             </div>
 
             <div className="d-flex flex-column gap-2">
-                {/* Auto-fill button */}
+                <button 
+                    className="btn btn-primary"
+                    onClick={handleSave} 
+                    disabled={saving}
+                >
+                    {saving ? t.actions.saving : t.actions.save}
+                </button>
                 <button 
                     className={`btn ${autoFillSuccess ? 'btn-success' : 'btn-outline-primary'} d-flex align-items-center justify-content-center gap-2`}
                     onClick={handleAutoFill}

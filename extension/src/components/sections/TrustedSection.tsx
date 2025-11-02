@@ -11,10 +11,10 @@ import { ApiResponseModel } from "../../services/apiService";
 interface TrustedSectionProps {
     t: {
         add_trusted: string;
-        loading?: string;
-        no_trusted_found?: string;
-        error_loading_trusted?: string;
-        login_required?: string;
+        loading: string;
+        no_trusted_found: string;
+        error_loading_trusted: string;
+        login_required: string;
     };
     onAddTrusted?: () => void;
     onEditTrusted?: (id: number) => void;
@@ -34,7 +34,7 @@ export function TrustedSection({ t, onAddTrusted, onEditTrusted }: TrustedSectio
                 setIsAuthenticated(authenticated);
 
                 if (!authenticated) {
-                    setError(t.login_required || "Please log in to view trusted contacts.");
+                    setError(t.login_required);
                     setLoading(false);
                     return;
                 }
@@ -43,7 +43,7 @@ export function TrustedSection({ t, onAddTrusted, onEditTrusted }: TrustedSectio
                 
                 if (response instanceof ApiResponseModel) {
                     // Error response
-                    setError(t.error_loading_trusted || "Failed to load trusted contacts.");
+                    setError(t.error_loading_trusted);
                 } else {
                     // Success response
                     setProtectingGuardians(response.protecting);
@@ -52,7 +52,7 @@ export function TrustedSection({ t, onAddTrusted, onEditTrusted }: TrustedSectio
                 }
             } catch (err) {
                 console.error("Error loading guardians:", err);
-                setError(t.error_loading_trusted || "Failed to load trusted contacts.");
+                setError(t.error_loading_trusted);
             } finally {
                 setLoading(false);
             }
@@ -86,7 +86,7 @@ export function TrustedSection({ t, onAddTrusted, onEditTrusted }: TrustedSectio
         return (
             <div className="d-flex flex-column align-items-center justify-content-center py-5">
                 <Spinner animation="border" variant="primary" />
-                <p className="mt-3 text-light">{t.loading || "Loading..."}</p>
+                <p className="mt-3 text-light">{t.loading}</p>
             </div>
         );
     }
@@ -120,7 +120,7 @@ export function TrustedSection({ t, onAddTrusted, onEditTrusted }: TrustedSectio
             {/* 📂 Guardian folders */}
             {!hasGuardians ? (
                 <div className="text-center py-5">
-                    <p className="text-light">{t.no_trusted_found || "No trusted contacts found."}</p>
+                    <p className="text-light">{t.no_trusted_found}</p>
                 </div>
             ) : (
                 <>

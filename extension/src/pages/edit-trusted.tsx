@@ -31,7 +31,7 @@ export function EditTrustedPage() {
                 const result = await guardianService.getGuardians();
                 
                 if (result instanceof ApiResponseModel) {
-                    setError(result.error || "Failed to load trusted persons");
+                    setError(result.error || t.home.error_load_trusted);
                 } else {
                     // Find the guardian by ID from both protecting and protected lists
                     const allGuardians = [...result.protecting, ...result.protected];
@@ -69,7 +69,7 @@ export function EditTrustedPage() {
             const result = await guardianService.createGuardian(email);
 
             if (result instanceof ApiResponseModel) {
-                setError(result.error || "Failed to update trusted person");
+                setError(result.error || t.home.error_update_trusted);
             } else {
                 navigate("/home");
             }
@@ -90,7 +90,7 @@ export function EditTrustedPage() {
             const result = await guardianService.removeGuardian(parseInt(id));
             
             if (result.status !== 200) {
-                setError(result.error || "Failed to delete trusted person");
+                setError(result.error || t.home.error_delete_trusted);
             } else {
                 navigate("/home");
             }
@@ -141,7 +141,7 @@ export function EditTrustedPage() {
                     onClick={handleSave} 
                     disabled={saving}
                 >
-                    {saving ? "Saving..." : "Save"}
+                    {saving ? t.actions.saving : t.actions.save}
                 </button>
                 <button 
                     className="btn btn-danger"

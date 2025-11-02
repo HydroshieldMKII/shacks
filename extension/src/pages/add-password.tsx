@@ -22,6 +22,13 @@ export function AddPasswordPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [existingFolders, setExistingFolders] = useState<FolderModel[]>([]);
+    
+    // Field-specific errors
+    const [fieldErrors, setFieldErrors] = useState<{
+        title?: string;
+        username?: string;
+        password?: string;
+    }>({});
 
     // Load existing folders on component mount
     useEffect(() => {
@@ -58,7 +65,7 @@ export function AddPasswordPage() {
         try {
             const result = await folderService.createFolder(name.trim());
             if (result instanceof ApiResponseModel) {
-                throw new Error(result.error || "Failed to create folder");
+                throw new Error(result.error || t.home.error_create_folder);
             } else {
                 // Add to existing folders list for future reference
                 setExistingFolders(prev => [...prev, result]);
@@ -70,14 +77,53 @@ export function AddPasswordPage() {
         }
     };
 
+    const validateFields = () => {
+        const errors: { title?: string; username?: string; password?: string } = {};
+        
+        if (!title.trim()) {
+            errors.title = t.errors.title_required;
+        }
+        if (!username.trim()) {
+            errors.username = t.errors.username_required;
+        }
+        if (!password.trim()) {
+            errors.password = t.errors.password_required;
+        }
+        
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    // Clear field error when user starts typing
+    const handleTitleChange = (value: string) => {
+        setTitle(value);
+        if (fieldErrors.title) {
+            setFieldErrors(prev => ({ ...prev, title: undefined }));
+        }
+    };
+
+    const handleUsernameChange = (value: string) => {
+        setUsername(value);
+        if (fieldErrors.username) {
+            setFieldErrors(prev => ({ ...prev, username: undefined }));
+        }
+    };
+
+    const handlePasswordChange = (value: string) => {
+        setPassword(value);
+        if (fieldErrors.password) {
+            setFieldErrors(prev => ({ ...prev, password: undefined }));
+        }
+    };
+
     const handleSubmit = async () => {
-        if (!title || !username || !password) {
-            setError("Title, username, and password are required.");
+        if (!validateFields()) {
             return;
         }
 
         setLoading(true);
         setError(null);
+        setFieldErrors({});
 
         try {
             // Get or create folder ID from folder name
@@ -98,7 +144,7 @@ export function AddPasswordPage() {
 
             if (result instanceof ApiResponseModel) {
                 // Error response
-                setError(result.error || "Failed to create password");
+                setError(result.error || t.home.error_create_password);
             } else {
                 // Success - navigate back to home
                 navigate("/home");
@@ -121,43 +167,50 @@ export function AddPasswordPage() {
 
             <div className="mb-3">
                 <EditFormField 
-                    label="Password Title" 
+                    label={t.password_title} 
                     value={title} 
-                    onChange={setTitle}
+                    onChange={handleTitleChange}
                     placeholder="e.g., YouTube Account"
+                    error={fieldErrors.title}
+                    required
                 />
             </div>
             
             <div className="mb-3">
                 <EditFormField 
-                    label="Website URL (optional)" 
+                    label={t.website_url_optional} 
                     value={url} 
                     onChange={setUrl}
-                    placeholder="https://example.com"
+                    placeholder="e.g., https://youtube.com"
                 />
             </div>
 
             <div className="mb-3">
                 <EditFormField 
-                    label="Username/Email" 
+                    label={t.username_email} 
                     value={username} 
-                    onChange={setUsername}
-                    placeholder="your@email.com"
+                    onChange={handleUsernameChange}
+                    placeholder="e.g., john.doe@email.com"
+                    error={fieldErrors.username}
+                    required
                 />
             </div>
             
             <div className="mb-3">
                 <EditFormField 
-                    label="Password" 
+                    label={t.password} 
                     type="password" 
                     value={password} 
-                    onChange={setPassword}
+                    onChange={handlePasswordChange}
+                    placeholder="Enter password"
+                    error={fieldErrors.password}
+                    required
                 />
             </div>
 
             <div className="mb-3">
                 <div className="mb-2">
-                    <label className="form-label text-light">Folder Name (optional)</label>
+                    <label className="form-label text-light">{t.folder_name_optional}</label>
                 </div>
                 <input
                     className="form-control bg-dark text-light border-secondary"
@@ -173,7 +226,7 @@ export function AddPasswordPage() {
                     ))}
                 </datalist>
                 <div className="form-text text-light small">
-                    Enter folder name to organize this password. Will create folder if it doesn't exist.
+                    {t.folder_name_hint}
                 </div>
             </div>
 
@@ -193,7 +246,7 @@ export function AddPasswordPage() {
                     onClick={handleSubmit} 
                     disabled={loading}
                 >
-                    {loading ? "Adding..." : t.home.add_password}
+                    {loading ? t.actions.adding : t.home.add_password}
                 </button>
             </div>
         </FormContainer>
