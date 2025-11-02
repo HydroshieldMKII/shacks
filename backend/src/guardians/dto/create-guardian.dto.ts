@@ -8,5 +8,5 @@ export class CreateGuardianDto {
   })
   @IsEmail()
   @IsNotEmpty()
-  guardedEmail: string;
+  email: string;
 }

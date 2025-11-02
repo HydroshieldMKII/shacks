@@ -40,17 +40,17 @@ export class GuardiansService {
       .getMany();
 
     return {
-      protecting: protecting.map((guardian) => ({
+      protected: protecting.map((guardian) => ({
         id: guardian.id,
         userId: guardian.userId,
         guardedEmail: guardian.guardedEmail,
         guardianKeyValue: guardian.guardianKeyValue, // Show key for people you protect
       })),
-      protected: protectedBy.map((guardian) => ({
+      protecting: protectedBy.map((guardian) => ({
         id: guardian.id,
         userId: guardian.userId,
         guardedEmail: guardian.guardedEmail,
-        // Don't include guardianKeyValue for people protecting you
+        // Don't include guardianKeyValue for people you protect
       })),
     };
   }
@@ -73,10 +73,23 @@ export class GuardiansService {
 
     // Verify guarded user exists
     const guardedUser = await this.usersService.findByEmail(
-      createGuardianDto.guardedEmail,
+      createGuardianDto.email,
     );
     if (!guardedUser) {
       throw new NotFoundException('Guarded user not found');
+    }
+
+    // Verify if it is not a duplicate guardian relationship
+    const existingGuardian = await this.guardianRepository.findOne({
+      where: {
+        userId: authUser.id,
+        guardedEmail: createGuardianDto.email,
+      },
+    });
+    if (existingGuardian) {
+      throw new BadRequestException(
+        'Guardian relationship already exists',
+      );
     }
 
     // Generate guardian key
@@ -85,7 +98,7 @@ export class GuardiansService {
     // Create guardian relationship between authUser and guardedUser
     const guardian = this.guardianRepository.create({
       userId: authUser.id,
-      guardedEmail: createGuardianDto.guardedEmail,
+      guardedEmail: createGuardianDto.email,
       guardianKeyValue: guardianKeyValue,
     });
 
