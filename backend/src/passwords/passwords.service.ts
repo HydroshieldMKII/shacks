@@ -218,6 +218,22 @@ export class PasswordsService {
 
     await this.passwordRepository.remove(password);
 
+    //check if it was the last password in the folder, if so, delete the folder as well
+    if (password.folderId) {
+      const remainingPasswords = await this.passwordRepository.find({
+        where: { folderId: password.folderId },
+      });
+
+      if (remainingPasswords.length === 0) {
+        const folder = await this.folderRepository.findOne({
+          where: { id: password.folderId },
+        });
+        if (folder) {
+          await this.folderRepository.remove(folder);
+        }
+      }
+    }
+
     return password;
   }
 }
