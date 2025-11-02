@@ -56,37 +56,37 @@ function Recovery() {
 
         // Email validation
         if (!form_data.email.trim()) {
-            new_errors.email = t.errors?.email_required || "Email is required.";
+            new_errors.email = t.errors.email_required;
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form_data.email)) {
-            new_errors.email = t.errors?.email_invalid || "Invalid email address.";
+            new_errors.email = t.errors.email_invalid;
         }
 
         // Guardian key 1 validation
         if (!form_data.key1.trim()) {
-            new_errors.key1 = "Guardian key #1 is required.";
+            new_errors.key1 = t.errors.guardian_key1_required;
         } else if (form_data.key1.trim().length < 8) {
-            new_errors.key1 = "Guardian key #1 must be at least 8 characters long.";
+            new_errors.key1 = t.errors.guardian_key1_length;
         }
 
         // Guardian key 2 validation
         if (!form_data.key2.trim()) {
-            new_errors.key2 = "Guardian key #2 is required.";
+            new_errors.key2 = t.errors.guardian_key2_required;
         } else if (form_data.key2.trim().length < 8) {
-            new_errors.key2 = "Guardian key #2 must be at least 8 characters long.";
+            new_errors.key2 = t.errors.guardian_key2_length;
         }
 
         // Password validation
         if (!form_data.password) {
-            new_errors.password = t.errors?.password_required || "Password is required.";
+            new_errors.password = t.errors.password_required;
         } else if (form_data.password.length < 8) {
-            new_errors.password = t.errors?.password_length || "Password must be at least 8 characters long.";
+            new_errors.password = t.errors.password_length;
         }
 
         // Confirm password validation
         if (!form_data.confirm) {
-            new_errors.confirm = "Please confirm your password.";
+            new_errors.confirm = t.errors.password_confirm_required;
         } else if (form_data.password !== form_data.confirm) {
-            new_errors.confirm = t.errors?.password_mismatch || "Passwords do not match.";
+            new_errors.confirm = t.errors.password_mismatch;
         }
 
         set_errors(new_errors);
@@ -122,7 +122,7 @@ function Recovery() {
             );
 
             if (response.status === 200) {
-                set_success_message(t.recovery_success || "Account recovered successfully! You can now log in.");
+                set_success_message(t.recovery_success);
                 
                 // Redirect to login page after 2 seconds
                 setTimeout(() => {
@@ -133,12 +133,12 @@ function Recovery() {
                 if (response.error) {
                     set_errors({ general: response.error });
                 } else {
-                    set_errors({ general: t.errors?.recovery_failed || "Recovery failed. Check your keys and try again." });
+                    set_errors({ general: t.errors.recovery_failed });
                 }
             }
         } catch (error) {
             console.error("Recovery error:", error);
-            set_errors({ general: t.errors?.recovery_failed || "Recovery failed. Check your keys and try again." });
+            set_errors({ general: t.errors.recovery_failed });
         } finally {
             set_is_loading(false);
         }

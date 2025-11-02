@@ -13,10 +13,12 @@
   "confirm_hint": "Répétez le mot de passe pour confirmation.",
   "login": "Se connecter",
   "signup": "Pas de compte ? Inscrivez-vous !",
-  "signup_button": "S’inscrire",
+  "signup_button": "S'inscrire",
   "login_redirect": "Déjà un compte ? Connectez-vous !",
   "signup_action": "Créer un compte",
   "signup_loading": "Inscription...",
+  "login_loading": "Connexion...",
+  "unexpected_error": "Une erreur inattendue s'est produite. Veuillez réessayer.",
   "back_to_login": "Déjà un compte ? Se connecter",
   "recovery_title": "Récupération de compte",
   "recovery_email_label": "Email du compte perdu",
@@ -32,6 +34,14 @@
   "recover_account": "Compte perdu ? Récupérez-le !",
   "note_label": "Note (optionnel)",
   "note_hint": "Ajoutez une note personnelle pour cette entrée.",
+  "website_url_optional": "URL du site web (optionnel)",
+  "password_title": "Titre du mot de passe",
+  "username_email": "Nom d'utilisateur/Courriel",
+  "guardian_email": "Courriel du gardien",
+  "name": "Nom",
+  "url": "URL",
+  "folder_name_optional": "Nom du dossier (optionnel)",
+  "folder_name_hint": "Entrez le nom du dossier pour organiser ce mot de passe. Le dossier sera créé s'il n'existe pas.",
   "passwords": {
     "add_title": "Ajouter un mot de passe",
     "add_subtitle": "Ajouter une nouvelle entrée de mot de passe",
@@ -40,7 +50,8 @@
   "trusted": {
     "add_title": "Ajouter une personne de confiance",
     "add_subtitle": "Ajouter un nouveau contact de confiance",
-    "edit_subtitle": "Modifier le contact de confiance"
+    "edit_subtitle": "Modifier le contact de confiance",
+    "invitation_explanation": "La personne de confiance recevra une invitation pour aider à protéger votre compte. Elle peut vous aider à récupérer votre mot de passe si nécessaire."
   },
   "home": {
     "passwords": "Mots de passe",
@@ -55,7 +66,26 @@
     "no_trusted_found": "Aucune personne de confiance trouvée.",
     "error_loading_trusted": "Erreur lors du chargement des personnes de confiance.",
     "login_required": "Veuillez vous connecter pour voir les personnes de confiance.",
-    "add_person": "Ajouter une personne"
+    "add_person": "Ajouter une personne",
+    "no_passwords_found": "Aucun mot de passe trouvé correspondant à votre recherche.",
+    "no_passwords_yet": "Aucun mot de passe encore. Ajoutez votre premier mot de passe !",
+    "error": "Erreur",
+    "try_again": "Réessayer",
+    "clear_search": "Effacer la recherche",
+    "search": "Rechercher",
+    "error_loading_passwords": "Erreur lors du chargement des mots de passe",
+    "error_unexpected": "Une erreur inattendue s'est produite",
+    "login_failed": "Connexion échouée. Veuillez réessayer.",
+    "signup_failed": "Inscription échouée. Veuillez réessayer.",
+    "error_load_password": "Erreur lors du chargement du mot de passe",
+    "error_create_folder": "Erreur lors de la création du dossier",
+    "error_update_password": "Erreur lors de la mise à jour du mot de passe",
+    "error_delete_password": "Erreur lors de la suppression du mot de passe",
+    "error_create_password": "Erreur lors de la création du mot de passe",
+    "error_add_trusted": "Erreur lors de l'ajout de la personne de confiance",
+    "error_load_trusted": "Erreur lors du chargement des personnes de confiance",
+    "error_update_trusted": "Erreur lors de la mise à jour de la personne de confiance",
+    "error_delete_trusted": "Erreur lors de la suppression de la personne de confiance"
   },
   "footer": {
     "passwords": "Mots de passe",
@@ -69,8 +99,21 @@
     "password_required": "Veuillez entrer un mot de passe.",
     "password_length": "Le mot de passe doit contenir au moins 8 caractères.",
     "password_mismatch": "Les mots de passe ne correspondent pas.",
+    "password_confirm_required": "Veuillez confirmer votre mot de passe.",
     "guardian_key_required": "Veuillez entrer une clé guardian.",
+    "guardian_key1_required": "La clé guardian #1 est requise.",
+    "guardian_key1_length": "La clé guardian #1 doit contenir au moins 8 caractères.",
+    "guardian_key2_required": "La clé guardian #2 est requise.",
+    "guardian_key2_length": "La clé guardian #2 doit contenir au moins 8 caractères.",
     "guardian_keys_different": "Les deux clés guardian doivent être différentes.",
-    "recovery_failed": "La récupération a échoué. Vérifiez vos clés et réessayez."
+    "recovery_failed": "La récupération a échoué. Vérifiez vos clés et réessayez.",
+    "title_username_password_required": "Le titre, le nom d'utilisateur et le mot de passe sont requis.",
+    "email_required_trusted": "Le courriel est requis.",
+    "email_invalid_trusted": "Veuillez entrer une adresse courriel valide."
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "adding": "Ajout..."
   }
 }

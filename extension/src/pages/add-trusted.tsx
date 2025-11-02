@@ -17,14 +17,14 @@ export function AddTrustedPage() {
 
     const handleSubmit = async () => {
         if (!email) {
-            setError("Email is required.");
+            setError(t.errors.email_required_trusted);
             return;
         }
 
         // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            setError("Please enter a valid email address.");
+            setError(t.errors.email_invalid_trusted);
             return;
         }
 
@@ -36,7 +36,7 @@ export function AddTrustedPage() {
 
             if (result instanceof ApiResponseModel) {
                 // Error response
-                setError(result.error || "Failed to add trusted person");
+                setError(result.error || t.home.error_add_trusted);
             } else {
                 // Success - navigate back to home
                 navigate("/home");
@@ -58,19 +58,17 @@ export function AddTrustedPage() {
             )}
 
             <div className="mb-3">
-                <EditFormField 
-                    label="Guardian Email" 
+                                <EditFormField 
+                    label={t.guardian_email} 
                     value={email} 
                     onChange={setEmail}
-                    placeholder="guardian@example.com"
-                    type="email"
+                    placeholder="e.g., friend@example.com"
                 />
             </div>
 
             <div className="mb-4">
                 <div className="form-text text-light small">
-                    The guardian will receive an invitation to help protect your account. 
-                    They can help you recover your password if needed.
+                    {t.trusted.invitation_explanation}
                 </div>
             </div>
 
@@ -80,7 +78,7 @@ export function AddTrustedPage() {
                     onClick={handleSubmit} 
                     disabled={loading}
                 >
-                    {loading ? "Adding..." : t.home.add_person}
+                    {loading ? t.actions.adding : t.home.add_person}
                 </button>
             </div>
         </FormContainer>

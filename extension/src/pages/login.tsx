@@ -75,10 +75,10 @@ function Login() {
                 navigate('/home');
             } else {
                 // Login failed, show error
-                set_errors({ general: result.error || 'Login failed. Please try again.' });
+                set_errors({ general: result.error || t.home.login_failed });
             }
         } catch (error) {
-            set_errors({ general: 'An unexpected error occurred. Please try again.' });
+            set_errors({ general: t.unexpected_error });
         } finally {
             set_is_loading(false);
         }
@@ -159,7 +159,7 @@ function Login() {
                             {is_loading ? (
                                 <>
                                     <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                    {lang === 'fr' ? 'Connexion...' : 'Logging in...'}
+                                    {t.login_loading}
                                 </>
                             ) : (
                                 t.login

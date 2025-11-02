@@ -11,11 +11,15 @@ interface PasswordSectionProps {
     t: {
         search_placeholder: string;
         add_password: string;
-        loading?: string;
-        error?: string;
-        try_again?: string;
-        no_passwords_found?: string;
-        no_passwords_yet?: string;
+        loading: string;
+        error: string;
+        try_again: string;
+        no_passwords_found: string;
+        no_passwords_yet: string;
+        error_loading_passwords: string;
+        error_unexpected: string;
+        clear_search: string;
+        search: string;
     };
     onAddPassword?: () => void;
     onEditPassword?: (passwordId: number) => void;
@@ -47,10 +51,10 @@ export function PasswordSection({ t, onAddPassword, onEditPassword, onRefresh }:
             } else {
                 // Handle error response
                 const apiError = result as ApiResponseModel;
-                setError(apiError.error || 'Failed to load passwords');
+                setError(apiError.error || t.error_loading_passwords);
             }
         } catch (err) {
-            setError('An unexpected error occurred');
+            setError(t.error_unexpected);
         } finally {
             setLoading(false);
         }
@@ -74,7 +78,7 @@ export function PasswordSection({ t, onAddPassword, onEditPassword, onRefresh }:
         return (
             <div className="d-flex flex-column align-items-center justify-content-center py-5">
                 <Spinner animation="border" variant="primary" />
-                <p className="mt-3 text-light">{t.loading || 'Loading passwords...'}</p>
+                <p className="mt-3 text-light">{t.loading}</p>
             </div>
         );
     }
@@ -82,10 +86,10 @@ export function PasswordSection({ t, onAddPassword, onEditPassword, onRefresh }:
     if (error) {
         return (
             <Alert variant="danger" className="mt-3">
-                <Alert.Heading>{t.error || 'Error'}</Alert.Heading>
+                <Alert.Heading>{t.error}</Alert.Heading>
                 <p>{error}</p>
                 <Button variant="outline-danger" size="sm" onClick={loadPasswords}>
-                    {t.try_again || 'Try Again'}
+                    {t.try_again}
                 </Button>
             </Alert>
         );
@@ -108,7 +112,7 @@ export function PasswordSection({ t, onAddPassword, onEditPassword, onRefresh }:
                         className="border-secondary rounded-end-3 d-flex align-items-center justify-content-center"
                         style={{ width: "42px" }}
                         onClick={() => setSearch("")}
-                        title={search ? "Clear search" : "Search"}
+                        title={search ? t.clear_search : t.search}
                     >
                         <Search size={16} />
                     </Button>
@@ -128,11 +132,11 @@ export function PasswordSection({ t, onAddPassword, onEditPassword, onRefresh }:
             {/* 📂 Folders */}
             {filteredFolders.length === 0 && search !== "" ? (
                 <div className="text-center py-5">
-                    <p className="text-light">{t.no_passwords_found || 'No passwords found matching your search.'}</p>
+                    <p className="text-light">{t.no_passwords_found}</p>
                 </div>
             ) : filteredFolders.length === 0 ? (
                 <div className="text-center py-5">
-                    <p className="text-light">{t.no_passwords_yet || 'No passwords yet. Add your first password!'}</p>
+                    <p className="text-light">{t.no_passwords_yet}</p>
                 </div>
             ) : (
                 filteredFolders.map((folder) => (

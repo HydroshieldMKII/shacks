@@ -58,7 +58,7 @@ export function AddPasswordPage() {
         try {
             const result = await folderService.createFolder(name.trim());
             if (result instanceof ApiResponseModel) {
-                throw new Error(result.error || "Failed to create folder");
+                throw new Error(result.error || t.home.error_create_folder);
             } else {
                 // Add to existing folders list for future reference
                 setExistingFolders(prev => [...prev, result]);
@@ -72,7 +72,7 @@ export function AddPasswordPage() {
 
     const handleSubmit = async () => {
         if (!title || !username || !password) {
-            setError("Title, username, and password are required.");
+            setError(t.errors.title_username_password_required);
             return;
         }
 
@@ -98,7 +98,7 @@ export function AddPasswordPage() {
 
             if (result instanceof ApiResponseModel) {
                 // Error response
-                setError(result.error || "Failed to create password");
+                setError(result.error || t.home.error_create_password);
             } else {
                 // Success - navigate back to home
                 navigate("/home");
@@ -121,7 +121,7 @@ export function AddPasswordPage() {
 
             <div className="mb-3">
                 <EditFormField 
-                    label="Password Title" 
+                    label={t.password_title} 
                     value={title} 
                     onChange={setTitle}
                     placeholder="e.g., YouTube Account"
@@ -130,34 +130,35 @@ export function AddPasswordPage() {
             
             <div className="mb-3">
                 <EditFormField 
-                    label="Website URL (optional)" 
+                    label={t.website_url_optional} 
                     value={url} 
                     onChange={setUrl}
-                    placeholder="https://example.com"
+                    placeholder="e.g., https://youtube.com"
                 />
             </div>
 
             <div className="mb-3">
                 <EditFormField 
-                    label="Username/Email" 
+                    label={t.username_email} 
                     value={username} 
                     onChange={setUsername}
-                    placeholder="your@email.com"
+                    placeholder="e.g., john.doe@email.com"
                 />
             </div>
             
             <div className="mb-3">
-                <EditFormField 
-                    label="Password" 
+                                <EditFormField 
+                    label={t.password} 
                     type="password" 
                     value={password} 
                     onChange={setPassword}
+                    placeholder="Enter password"
                 />
             </div>
 
             <div className="mb-3">
                 <div className="mb-2">
-                    <label className="form-label text-light">Folder Name (optional)</label>
+                    <label className="form-label text-light">{t.folder_name_optional}</label>
                 </div>
                 <input
                     className="form-control bg-dark text-light border-secondary"
@@ -173,7 +174,7 @@ export function AddPasswordPage() {
                     ))}
                 </datalist>
                 <div className="form-text text-light small">
-                    Enter folder name to organize this password. Will create folder if it doesn't exist.
+                    {t.folder_name_hint}
                 </div>
             </div>
 
@@ -193,7 +194,7 @@ export function AddPasswordPage() {
                     onClick={handleSubmit} 
                     disabled={loading}
                 >
-                    {loading ? "Adding..." : t.home.add_password}
+                    {loading ? t.actions.adding : t.home.add_password}
                 </button>
             </div>
         </FormContainer>

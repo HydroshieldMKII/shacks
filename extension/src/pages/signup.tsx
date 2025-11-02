@@ -88,10 +88,10 @@ function Signup() {
                 navigate('/home');
             } else {
                 // Signup failed, show error
-                set_errors({ general: result.error || 'Signup failed. Please try again.' });
+                set_errors({ general: result.error || t.home.signup_failed });
             }
         } catch (error) {
-            set_errors({ general: 'An unexpected error occurred. Please try again.' });
+            set_errors({ general: t.unexpected_error });
         } finally {
             set_is_loading(false);
         }

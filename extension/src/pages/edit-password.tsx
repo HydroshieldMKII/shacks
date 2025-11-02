@@ -42,7 +42,7 @@ export function EditPasswordPage() {
                     const passwordResult = await passwordService.getPassword(parseInt(id));
                     
                     if (passwordResult instanceof ApiResponseModel) {
-                        setError(passwordResult.error || "Failed to load password");
+                        setError(passwordResult.error || t.home.error_load_password);
                     } else {
                         // PasswordModel
                         setTitle(passwordResult.name);
@@ -90,7 +90,7 @@ export function EditPasswordPage() {
         try {
             const result = await folderService.createFolder(name.trim());
             if (result instanceof ApiResponseModel) {
-                throw new Error(result.error || "Failed to create folder");
+                throw new Error(result.error || t.home.error_create_folder);
             } else {
                 // Add to existing folders list for future reference
                 setExistingFolders(prev => [...prev, result]);
@@ -133,7 +133,7 @@ export function EditPasswordPage() {
             );
 
             if (result instanceof ApiResponseModel) {
-                setError(result.error || "Failed to update password");
+                setError(result.error || t.home.error_update_password);
             } else {
                 navigate("/home");
             }
@@ -154,7 +154,7 @@ export function EditPasswordPage() {
             const result = await passwordService.deletePassword(parseInt(id));
             
             if (result instanceof ApiResponseModel) {
-                setError(result.error || "Failed to delete password");
+                setError(result.error || t.home.error_delete_password);
             } else {
                 navigate("/home");
             }
@@ -192,7 +192,7 @@ export function EditPasswordPage() {
         <FormContainer title={t.passwords.edit_subtitle} showBackButton>
             <div className="mb-3">
                 <EditFormField 
-                    label="Name" 
+                    label={t.name} 
                     value={title} 
                     onChange={setTitle} 
                 />
@@ -200,7 +200,7 @@ export function EditPasswordPage() {
 
             <div className="mb-3">
                 <EditFormField 
-                    label="URL" 
+                    label={t.url} 
                     value={url} 
                     onChange={setUrl} 
                 />
@@ -208,7 +208,7 @@ export function EditPasswordPage() {
 
             <div className="mb-3">
                 <div className="mb-2">
-                    <label className="form-label text-light">Folder Name (optional)</label>
+                    <label className="form-label text-light">{t.folder_name_optional}</label>
                 </div>
                 <input
                     className="form-control bg-dark text-light border-secondary"
@@ -224,7 +224,7 @@ export function EditPasswordPage() {
                     ))}
                 </datalist>
                 <div className="form-text text-light small">
-                    Enter folder name to organize this password. Will create folder if it doesn't exist.
+                    {t.folder_name_hint}
                 </div>
             </div>
 
@@ -261,7 +261,7 @@ export function EditPasswordPage() {
                     onClick={handleSave} 
                     disabled={saving}
                 >
-                    {saving ? "Saving..." : "Save"}
+                    {saving ? t.actions.saving : t.actions.save}
                 </button>
                 <button 
                     className="btn btn-danger"

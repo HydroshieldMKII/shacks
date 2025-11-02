@@ -17,6 +17,8 @@
   "login_redirect": "Already have an account? Log in!",
   "signup_action": "Create account",
   "signup_loading": "Signing up...",
+  "login_loading": "Logging in...",
+  "unexpected_error": "An unexpected error occurred. Please try again.",
   "back_to_login": "Already have an account? Log in",
   "recovery_title": "Account Recovery",
   "recovery_email_label": "Lost Account Email",
@@ -32,6 +34,14 @@
   "recover_account": "Lost account? Recover it!",
   "note_label": "Note (optional)",
   "note_hint": "Add a personal note for this entry.",
+  "website_url_optional": "Website URL (optional)",
+  "password_title": "Password Title",
+  "username_email": "Username/Email",
+  "guardian_email": "Guardian Email",
+  "name": "Name",
+  "url": "URL",
+  "folder_name_optional": "Folder Name (optional)",
+  "folder_name_hint": "Enter folder name to organize this password. Will create folder if it doesn't exist.",
   "passwords": {
     "add_title": "Add Password",
     "add_subtitle": "Add a new password entry",
@@ -40,7 +50,8 @@
   "trusted": {
     "add_title": "Add Trusted Person",
     "add_subtitle": "Add a new trusted contact",
-    "edit_subtitle": "Edit trusted contact"
+    "edit_subtitle": "Edit trusted contact",
+    "invitation_explanation": "The guardian will receive an invitation to help protect your account. They can help you recover your password if needed."
   },
   "home": {
     "passwords": "Passwords",
@@ -55,7 +66,26 @@
     "no_trusted_found": "No trusted contacts found.",
     "error_loading_trusted": "Failed to load trusted contacts.",
     "login_required": "Please log in to view trusted contacts.",
-    "add_person": "Add person"
+    "add_person": "Add person",
+    "no_passwords_found": "No passwords found matching your search.",
+    "no_passwords_yet": "No passwords yet. Add your first password!",
+    "error": "Error",
+    "try_again": "Try Again",
+    "clear_search": "Clear search",
+    "search": "Search",
+    "error_loading_passwords": "Failed to load passwords",
+    "error_unexpected": "An unexpected error occurred",
+    "login_failed": "Login failed. Please try again.",
+    "signup_failed": "Signup failed. Please try again.",
+    "error_load_password": "Failed to load password",
+    "error_create_folder": "Failed to create folder",
+    "error_update_password": "Failed to update password",
+    "error_delete_password": "Failed to delete password",
+    "error_create_password": "Failed to create password",
+    "error_add_trusted": "Failed to add trusted person",
+    "error_load_trusted": "Failed to load trusted persons",
+    "error_update_trusted": "Failed to update trusted person",
+    "error_delete_trusted": "Failed to delete trusted person"
   },
   "footer": {
     "passwords": "Passwords",
@@ -69,8 +99,21 @@
     "password_required": "Please enter a password.",
     "password_length": "Password must be at least 8 characters long.",
     "password_mismatch": "Passwords do not match.",
+    "password_confirm_required": "Please confirm your password.",
     "guardian_key_required": "Please enter a guardian key.",
+    "guardian_key1_required": "Guardian key #1 is required.",
+    "guardian_key1_length": "Guardian key #1 must be at least 8 characters long.",
+    "guardian_key2_required": "Guardian key #2 is required.",
+    "guardian_key2_length": "Guardian key #2 must be at least 8 characters long.",
     "guardian_keys_different": "Both guardian keys must be different.",
-    "recovery_failed": "Recovery failed. Check your keys and try again."
+    "recovery_failed": "Recovery failed. Check your keys and try again.",
+    "title_username_password_required": "Title, username, and password are required.",
+    "email_required_trusted": "Email is required.",
+    "email_invalid_trusted": "Please enter a valid email address."
+  },
+  "actions": {
+    "save": "Save",
+    "saving": "Saving...",
+    "adding": "Adding..."
   }
 }
