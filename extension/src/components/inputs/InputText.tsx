@@ -12,7 +12,7 @@ interface InputTextProps {
 export function InputText({ id, label, hint, error, value, onChange }: InputTextProps) {
     return (
         <Form.Group className="mb-3" controlId={id}>
-            <Form.Label className="fw-semibold small">{label}</Form.Label>
+            <Form.Label className="fw-semibold small text-light">{label}</Form.Label>
             <Form.Control
                 type="text"
                 className={`form-control-sm bg-dark text-light border-secondary ${error ? "is-invalid" : ""}`}
@@ -24,7 +24,7 @@ export function InputText({ id, label, hint, error, value, onChange }: InputText
                     {error}
                 </Form.Control.Feedback>
             ) : (
-                hint && <Form.Text className="text-secondary small">{hint}</Form.Text>
+                hint && <Form.Text className="text-light small">{hint}</Form.Text>
             )}
         </Form.Group>
     );

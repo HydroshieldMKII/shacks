@@ -7,7 +7,7 @@ export function LangSwitch({ lang, on_toggle }: LangSwitchProps) {
     return (
         <div className="text-center mt-3">
             <small
-                className="text-secondary"
+                className="text-light"
                 style={{ cursor: "pointer", userSelect: "none" }}
                 onClick={on_toggle}
             >

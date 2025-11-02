@@ -36,9 +36,9 @@ export function EditPageLayout({
                 style={{ zIndex: 1000 }}
             >
                 <h1 className="fw-bold text-primary fs-4 mb-1">TRUST</h1>
-                <h5 className="fw-semibold mb-1 mt-2">{title}</h5> {/* ✅ plus d’espace au-dessus */}
+                <h5 className="fw-semibold mb-1 mt-2">{title}</h5> {/* ✅ plus d'espace au-dessus */}
                 {subtitle && (
-                    <small className="text-secondary d-block mt-1">{subtitle}</small>
+                    <small className="text-light d-block mt-1">{subtitle}</small>
                 )}
             </header>
 

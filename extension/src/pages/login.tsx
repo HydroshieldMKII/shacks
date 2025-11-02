@@ -118,7 +118,7 @@ function Login() {
                                 {errors.username}
                             </Form.Control.Feedback>
                         ) : (
-                            <Form.Text className="text-secondary small">{t.username_hint}</Form.Text>
+                            <Form.Text className="text-light small">{t.username_hint}</Form.Text>
                         )}
                     </Form.Group>
 
@@ -145,7 +145,7 @@ function Login() {
                                 {errors.password}
                             </Form.Control.Feedback>
                         ) : (
-                            <Form.Text className="text-secondary small">{t.password_hint}</Form.Text>
+                            <Form.Text className="text-light small">{t.password_hint}</Form.Text>
                         )}
                     </Form.Group>
 
@@ -182,7 +182,7 @@ function Login() {
 
                 <div className="text-center mt-3">
                     <small
-                        className="text-secondary"
+                        className="text-light"
                         style={{ cursor: "pointer", userSelect: "none" }}
                         onClick={toggleLang}
                     >

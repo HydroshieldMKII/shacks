@@ -1,42 +1,88 @@
 import { useState } from "react";
-import { EditPageLayout } from "../components/layout/EditPageLayout";
+import { useNavigate } from "react-router-dom";
+import { FormContainer } from "../components/forms/FormContainer";
 import { EditFormField } from "../components/forms/EditFormField";
 import { locales, type LocaleKey } from "../locales";
-import { Form } from "react-bootstrap";
+import guardianService from "../services/guardianService";
+import { ApiResponseModel } from "../services/apiService";
 
 export function AddTrustedPage() {
     const [lang] = useState<LocaleKey>("fr");
     const t = locales[lang];
+    const navigate = useNavigate();
 
-    const [fullname, setFullname] = useState("");
-    const [email, setEmail] = useState("");
-    const [note, setNote] = useState("");
+    const [email, setEmail] = useState(""); // Guardian service only needs email
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = () => {
-        console.log("Personne de confiance ajoutée :", { fullname, email, note });
+    const handleSubmit = async () => {
+        if (!email) {
+            setError("Email is required.");
+            return;
+        }
+
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setError("Please enter a valid email address.");
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            const result = await guardianService.createGuardian(email);
+
+            if (result instanceof ApiResponseModel) {
+                // Error response
+                setError(result.error || "Failed to add trusted person");
+            } else {
+                // Success - navigate back to home
+                navigate("/home");
+            }
+        } catch (err) {
+            console.error("Error creating guardian:", err);
+            setError("An unexpected error occurred");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <EditPageLayout
-            title={t.trusted.add_title}
-            subtitle={t.trusted.add_subtitle}
-            onSubmit={handleSubmit}
-            submitLabel={t.home.add_person}
-        >
-            <EditFormField label={t.username} value={fullname} onChange={setFullname} />
-            <EditFormField label={t.email} value={email} onChange={setEmail} />
+        <FormContainer title={t.trusted.add_title} showBackButton>
+            {error && (
+                <div className="alert alert-danger mb-3">
+                    {error}
+                </div>
+            )}
 
-            <Form.Group className="mb-3">
-                <Form.Label className="text-light fw-semibold">{t.note_label}</Form.Label>
-                <Form.Control
-                    as="textarea"
-                    rows={2}
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    className="bg-dark text-light border-secondary"
+            <div className="mb-3">
+                <EditFormField 
+                    label="Guardian Email" 
+                    value={email} 
+                    onChange={setEmail}
+                    placeholder="guardian@example.com"
+                    type="email"
                 />
-                <Form.Text className="text-secondary small">{t.note_hint}</Form.Text>
-            </Form.Group>
-        </EditPageLayout>
+            </div>
+
+            <div className="mb-4">
+                <div className="form-text text-light small">
+                    The guardian will receive an invitation to help protect your account. 
+                    They can help you recover your password if needed.
+                </div>
+            </div>
+
+            <div className="d-flex gap-2">
+                <button 
+                    className="btn btn-primary"
+                    onClick={handleSubmit} 
+                    disabled={loading}
+                >
+                    {loading ? "Adding..." : t.home.add_person}
+                </button>
+            </div>
+        </FormContainer>
     );
 }

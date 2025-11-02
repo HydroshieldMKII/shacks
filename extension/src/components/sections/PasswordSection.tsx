@@ -18,12 +18,11 @@ interface PasswordSectionProps {
         no_passwords_yet?: string;
     };
     onAddPassword?: () => void;
-    onViewPassword?: (passwordId: number) => void;
     onEditPassword?: (passwordId: number) => void;
     onRefresh?: (refreshFn: () => void) => void;
 }
 
-export function PasswordSection({ t, onAddPassword, onViewPassword, onEditPassword, onRefresh }: PasswordSectionProps) {
+export function PasswordSection({ t, onAddPassword, onEditPassword, onRefresh }: PasswordSectionProps) {
     const [search, setSearch] = useState("");
     const [folders, setFolders] = useState<FolderModel[]>([]);
     const [loading, setLoading] = useState(true);
@@ -75,7 +74,7 @@ export function PasswordSection({ t, onAddPassword, onViewPassword, onEditPasswo
         return (
             <div className="d-flex flex-column align-items-center justify-content-center py-5">
                 <Spinner animation="border" variant="primary" />
-                <p className="mt-3 text-secondary">{t.loading || 'Loading passwords...'}</p>
+                <p className="mt-3 text-light">{t.loading || 'Loading passwords...'}</p>
             </div>
         );
     }
@@ -129,11 +128,11 @@ export function PasswordSection({ t, onAddPassword, onViewPassword, onEditPasswo
             {/* 📂 Folders */}
             {filteredFolders.length === 0 && search !== "" ? (
                 <div className="text-center py-5">
-                    <p className="text-secondary">{t.no_passwords_found || 'No passwords found matching your search.'}</p>
+                    <p className="text-light">{t.no_passwords_found || 'No passwords found matching your search.'}</p>
                 </div>
             ) : filteredFolders.length === 0 ? (
                 <div className="text-center py-5">
-                    <p className="text-secondary">{t.no_passwords_yet || 'No passwords yet. Add your first password!'}</p>
+                    <p className="text-light">{t.no_passwords_yet || 'No passwords yet. Add your first password!'}</p>
                 </div>
             ) : (
                 filteredFolders.map((folder) => (
@@ -142,12 +141,7 @@ export function PasswordSection({ t, onAddPassword, onViewPassword, onEditPasswo
                             <PasswordElement 
                                 key={password.id || `${folder.id}-${password.name}`} 
                                 name={password.name}
-                                onView={() => {
-                                    if (password.id && onViewPassword) {
-                                        onViewPassword(password.id);
-                                    }
-                                }}
-                                onEdit={() => {
+                                onClick={() => {
                                     if (password.id && onEditPassword) {
                                         onEditPassword(password.id);
                                     }

@@ -158,7 +158,7 @@ function Signup() {
 
             <div className="text-center mt-4">
                 <small
-                    className="text-secondary"
+                    className="text-light"
                     style={{ cursor: "pointer", userSelect: "none" }}
                     onClick={toggleLang}
                 >

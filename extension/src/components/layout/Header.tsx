@@ -19,7 +19,7 @@ export function Header({ title, appName, lang, onLangToggle, onLogout }: HeaderP
 
                 <div className="d-flex align-items-center gap-2">
                     <small
-                        className="text-secondary"
+                        className="text-light"
                         style={{ cursor: "pointer", userSelect: "none" }}
                         onClick={onLangToggle}
                     >

@@ -16,7 +16,7 @@ export function TrustedElement({ name, onEdit, onRemove }: TrustedItemProps) {
                 cursor: "pointer",
             }}
         >
-            <span className="fw-medium">{name}</span>
+            <span className="fw-medium text-light">{name}</span>
             <div className="d-flex align-items-center gap-2">
                 <Button
                     variant="outline-secondary"

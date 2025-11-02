@@ -21,11 +21,11 @@ export function FolderElement({ name, count, children }: FolderProps) {
                 }}
                 onClick={() => setOpen(!open)}
             >
-                <div className="fw-semibold small text-uppercase text-secondary">
-                    {open ? <ChevronDown /> : <ChevronRight />} {name}
+                <div className="fw-semibold small text-uppercase text-light">
+                    {open ? <ChevronDown className="text-light" /> : <ChevronRight className="text-light" />} {name}
                 </div>
                 {typeof count === "number" && (
-                    <span className="badge bg-secondary">{count}</span>
+                    <span className="badge bg-secondary text-light">{count}</span>
                 )}
             </div>
 

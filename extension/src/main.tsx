@@ -9,6 +9,10 @@ import Recovery from "./pages/recovery.tsx";
 import PasswordDetail from "./pages/password-details.tsx";
 import PasswordList from "./pages/password-list.tsx";
 import Home from "./pages/home.tsx";
+import { AddPasswordPage } from "./pages/add-password.tsx";
+import { AddTrustedPage } from "./pages/add-trusted.tsx";
+import { EditPasswordPage } from "./pages/edit-password.tsx";
+import { EditTrustedPage } from "./pages/edit-trusted.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -20,7 +24,13 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/home" element={<Home />} />
                 <Route path="/passwords">
                     <Route index element={<PasswordList />} />
+                    <Route path="add" element={<AddPasswordPage />} />
+                    <Route path="edit/:id" element={<EditPasswordPage />} />
                     <Route path=":id" element={<PasswordDetail />} />
+                </Route>
+                <Route path="/trusted">
+                    <Route path="add" element={<AddTrustedPage />} />
+                    <Route path="edit/:id" element={<EditTrustedPage />} />
                 </Route>
             </Routes>
         </HashRouter>

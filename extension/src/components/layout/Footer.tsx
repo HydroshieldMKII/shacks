@@ -17,7 +17,7 @@ export function Footer({ activeTab, onChange, t }: FooterProps) {
                 <Button
                     variant="link"
                     className={`text-decoration-none d-flex flex-column align-items-center ${
-                        activeTab === "passwords" ? "text-primary" : "text-secondary"
+                        activeTab === "passwords" ? "text-primary" : "text-light"
                     }`}
                     onClick={() => onChange("passwords")}
                 >
@@ -28,7 +28,7 @@ export function Footer({ activeTab, onChange, t }: FooterProps) {
                 <Button
                     variant="link"
                     className={`text-decoration-none d-flex flex-column align-items-center ${
-                        activeTab === "trusted" ? "text-primary" : "text-secondary"
+                        activeTab === "trusted" ? "text-primary" : "text-light"
                     }`}
                     onClick={() => onChange("trusted")}
                 >

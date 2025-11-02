@@ -24,7 +24,7 @@ export function InputPassword({
                               }: InputPasswordProps) {
     return (
         <Form.Group className="mb-3" controlId={id}>
-            <Form.Label className="fw-semibold small">{label}</Form.Label>
+            <Form.Label className="fw-semibold small text-light">{label}</Form.Label>
             <InputGroup size="sm" hasValidation>
                 <Form.Control
                     type={showPassword ? "text" : "password"}
@@ -36,7 +36,7 @@ export function InputPassword({
                     variant="outline-secondary"
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="rounded-end-3 border-secondary"
+                    className="rounded-end-3 border-secondary text-light"
                 >
                     {showPassword ? <EyeSlashFill /> : <EyeFill />}
                 </Button>
@@ -47,7 +47,7 @@ export function InputPassword({
                 )}
             </InputGroup>
             {!error && hint && (
-                <Form.Text className="text-secondary small">{hint}</Form.Text>
+                <Form.Text className="text-light small">{hint}</Form.Text>
             )}
         </Form.Group>
     );

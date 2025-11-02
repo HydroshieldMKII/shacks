@@ -72,9 +72,17 @@ function Home() {
                 }}
             >
                 {tab === "passwords" ? (
-                    <PasswordSection t={t.home} />
+                    <PasswordSection 
+                        t={t.home} 
+                        onAddPassword={() => navigate('/passwords/add')}
+                        onEditPassword={(id) => navigate(`/passwords/edit/${id}`)}
+                    />
                 ) : (
-                    <TrustedSection t={t.home} />
+                    <TrustedSection 
+                        t={t.home} 
+                        onAddTrusted={() => navigate('/trusted/add')}
+                        onEditTrusted={(id: number) => navigate(`/trusted/edit/${id}`)}
+                    />
                 )}
             </main>
 

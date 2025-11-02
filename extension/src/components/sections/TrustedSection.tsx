@@ -16,9 +16,11 @@ interface TrustedSectionProps {
         error_loading_trusted?: string;
         login_required?: string;
     };
+    onAddTrusted?: () => void;
+    onEditTrusted?: (id: number) => void;
 }
 
-export function TrustedSection({ t }: TrustedSectionProps) {
+export function TrustedSection({ t, onAddTrusted, onEditTrusted }: TrustedSectionProps) {
     const [protectingGuardians, setProtectingGuardians] = useState<GuardianModel[]>([]);
     const [protectedGuardians, setProtectedGuardians] = useState<GuardianModel[]>([]);
     const [loading, setLoading] = useState(true);
@@ -60,8 +62,9 @@ export function TrustedSection({ t }: TrustedSectionProps) {
     }, [t.error_loading_trusted, t.login_required]);
 
     const handleAddTrusted = () => {
-        // TODO: Implement add trusted functionality
-        console.log("Add trusted clicked");
+        if (onAddTrusted) {
+            onAddTrusted();
+        }
     };
 
     const handleRemoveTrusted = async (id: number) => {
@@ -83,7 +86,7 @@ export function TrustedSection({ t }: TrustedSectionProps) {
         return (
             <div className="d-flex flex-column align-items-center justify-content-center py-5">
                 <Spinner animation="border" variant="primary" />
-                <p className="mt-3 text-secondary">{t.loading || "Loading..."}</p>
+                <p className="mt-3 text-light">{t.loading || "Loading..."}</p>
             </div>
         );
     }
@@ -117,7 +120,7 @@ export function TrustedSection({ t }: TrustedSectionProps) {
             {/* 📂 Guardian folders */}
             {!hasGuardians ? (
                 <div className="text-center py-5">
-                    <p className="text-secondary">{t.no_trusted_found || "No trusted contacts found."}</p>
+                    <p className="text-light">{t.no_trusted_found || "No trusted contacts found."}</p>
                 </div>
             ) : (
                 <>
@@ -127,6 +130,7 @@ export function TrustedSection({ t }: TrustedSectionProps) {
                                 <TrustedElement 
                                     key={guardian.id} 
                                     name={guardian.guardedEmail}
+                                    onEdit={() => onEditTrusted && onEditTrusted(guardian.id)}
                                     onRemove={() => handleRemoveTrusted(guardian.id)}
                                 />
                             ))}
@@ -139,6 +143,7 @@ export function TrustedSection({ t }: TrustedSectionProps) {
                                 <TrustedElement 
                                     key={guardian.id} 
                                     name={guardian.guardedEmail}
+                                    onEdit={() => onEditTrusted && onEditTrusted(guardian.id)}
                                     onRemove={() => handleRemoveTrusted(guardian.id)}
                                 />
                             ))}
