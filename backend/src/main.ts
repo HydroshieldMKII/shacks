@@ -11,7 +11,6 @@ async function bootstrap() {
   // Allow Chrome extension origins
   app.enableCors({
     origin: (origin, callback) => {
-      console.log('CORS origin:', origin);
       return callback(null, true);
     },
     credentials: true,

@@ -198,6 +198,10 @@ export class PasswordsService {
     if (updatePasswordDto.notes !== undefined) {
       password.notes = updatePasswordDto.notes;
     }
+    
+    // Store the old folderId before updating
+    const oldFolderId = password.folderId;
+    
     if (updatePasswordDto.folderId !== undefined) {
       // Validate folderId if provided (not null or undefined)
       if (updatePasswordDto.folderId !== null) {
@@ -219,6 +223,22 @@ export class PasswordsService {
     }
 
     const updatedPassword = await this.passwordRepository.save(password);
+
+    //check if it was the last password in the previous folder, if so, delete the folder as well
+    if (updatePasswordDto.folderId !== undefined && oldFolderId) {
+      const remainingPasswords = await this.passwordRepository.find({
+        where: { folderId: oldFolderId },
+      });
+
+      if (remainingPasswords.length === 0) {
+        const folder = await this.folderRepository.findOne({
+          where: { id: oldFolderId },
+        });
+        if (folder) {
+          await this.folderRepository.remove(folder);
+        }
+      }
+    }
 
     return updatedPassword;
   }
