@@ -165,9 +165,14 @@ class ApiService {
         await this.clearSession();
         
         // Redirect to login page
-        // Check if we're in an extension context or web context
         if (typeof window !== 'undefined' && window.location) {
-            window.location.href = '/login';
+            // For Chrome extension with HashRouter, use hash-based navigation
+            if (window.location.hash !== '#/') {
+                window.location.hash = '#/';
+            } else {
+                // If already on login page, force reload to clear any state
+                window.location.reload();
+            }
         }
     }
 
