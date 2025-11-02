@@ -36,6 +36,16 @@ class GuardianService {
     async removeGuardian(id: number): Promise<ApiResponseModel> {
         return apiService.deleteRequest(`/guardians/${id}`);
     }
+
+    async recover(email: string, guardianKey1: string, guardianKey2: string, newPassword: string): Promise<ApiResponseModel> {
+        const response = await apiService.postRequest(`/guardians/recover`, {}, {
+            email: email,
+            guardianKey1: guardianKey1,
+            guardianKey2: guardianKey2,
+            newPassword: newPassword
+        });
+        return response;
+    }
 }
 
 const guardianService = new GuardianService();

@@ -159,6 +159,23 @@ class ApiService {
         await this.cookieManager.removeCookie('connect.sid');
     }
 
+    // Handle 401 Unauthorized responses
+    private async handle401Response(): Promise<void> {
+        // Clear session cookies
+        await this.clearSession();
+        
+        // Redirect to login page
+        if (typeof window !== 'undefined' && window.location) {
+            // For Chrome extension with HashRouter, use hash-based navigation
+            if (window.location.hash !== '#/') {
+                window.location.hash = '#/';
+            } else {
+                // If already on login page, force reload to clear any state
+                window.location.reload();
+            }
+        }
+    }
+
     async getRequest(query: string, params?: { [key: string]: string }): Promise<ApiResponseModel> {
         try {
             const sessionCookie = await this.getSessionCookie();
@@ -179,6 +196,12 @@ class ApiService {
 
             // Handle cookies from response
             await this.handleResponseCookies(response);
+
+            // Handle 401 Unauthorized
+            if (response.status === 401) {
+                await this.handle401Response();
+                return new ApiResponseModel(null, 401, response.headers, 'Session expired. Please log in again.');
+            }
 
             const data = await response.json();
             return new ApiResponseModel(data, response.status, response.headers);
@@ -209,6 +232,12 @@ class ApiService {
             // Handle cookies from response
             await this.handleResponseCookies(response);
 
+            // Handle 401 Unauthorized
+            if (response.status === 401) {
+                await this.handle401Response();
+                return new ApiResponseModel(null, 401, response.headers, 'Session expired. Please log in again.');
+            }
+
             const data = await response.json();
             return new ApiResponseModel(data, response.status, response.headers);
         } catch (error: any) {
@@ -237,6 +266,12 @@ class ApiService {
             // Handle cookies from response
             await this.handleResponseCookies(response);
 
+            // Handle 401 Unauthorized
+            if (response.status === 401) {
+                await this.handle401Response();
+                return new ApiResponseModel(null, 401, response.headers, 'Session expired. Please log in again.');
+            }
+
             const data = await response.json();
             return new ApiResponseModel(data, response.status, response.headers);
         } catch (error: any) {
@@ -244,7 +279,7 @@ class ApiService {
         }
     }
 
-    async putRequest(query: string, params?: { [key: string]: string }, body?: any): Promise<ApiResponseModel> {
+    async putRequest(query: string, params?: { [key: string]: string }, data?: any): Promise<ApiResponseModel> {
         try {
             const sessionCookie = await this.getSessionCookie();
             const headers: Record<string, string> = {
@@ -260,14 +295,20 @@ class ApiService {
                 method: 'PUT',
                 credentials: 'include',
                 headers,
-                body: body ? JSON.stringify(body) : null,
+                body: JSON.stringify(data),
             });
 
             // Handle cookies from response
             await this.handleResponseCookies(response);
 
-            const data = await response.json();
-            return new ApiResponseModel(data, response.status, response.headers);
+            // Handle 401 Unauthorized
+            if (response.status === 401) {
+                await this.handle401Response();
+                return new ApiResponseModel(null, 401, response.headers, 'Session expired. Please log in again.');
+            }
+
+            const responseData = await response.json();
+            return new ApiResponseModel(responseData, response.status, response.headers);
         } catch (error: any) {
             return new ApiResponseModel(null, 500, new Headers(), error.message);
         }
@@ -294,6 +335,12 @@ class ApiService {
 
             // Handle cookies from response
             await this.handleResponseCookies(response);
+
+            // Handle 401 Unauthorized
+            if (response.status === 401) {
+                await this.handle401Response();
+                return new ApiResponseModel(null, 401, response.headers, 'Session expired. Please log in again.');
+            }
 
             const data = await response.json();
             return new ApiResponseModel(data, response.status, response.headers);

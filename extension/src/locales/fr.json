@@ -14,8 +14,8 @@
   "login": "Se connecter",
   "signup": "Pas de compte ? Inscrivez-vous !",
   "signup_button": "S’inscrire",
-  "signup_action": "Créer un compte",
   "login_redirect": "Déjà un compte ? Connectez-vous !",
+  "signup_action": "Créer un compte",
   "signup_loading": "Inscription...",
   "back_to_login": "Déjà un compte ? Se connecter",
   "recovery_title": "Récupération de compte",
@@ -35,10 +35,14 @@
     "trusted": "Personnes de confiance",
     "search_placeholder": "Rechercher...",
     "add_password": "Ajouter un mot de passe",
-    "add_person": "Ajouter une personne",
+    "add_trusted": "Ajouter une personne de confiance",
     "personal_accounts": "Comptes personnels",
     "professional_accounts": "Comptes professionnels",
-    "no_results": "Aucun résultat"
+    "no_results": "Aucun résultat",
+    "loading": "Chargement...",
+    "no_trusted_found": "Aucune personne de confiance trouvée.",
+    "error_loading_trusted": "Erreur lors du chargement des personnes de confiance.",
+    "login_required": "Veuillez vous connecter pour voir les personnes de confiance."
   },
   "footer": {
     "passwords": "Mots de passe",
