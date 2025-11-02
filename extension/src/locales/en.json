@@ -1,44 +1,48 @@
 {
   "app_name": "TRUST",
   "login_title": "Login",
-  "signup_title": "Sign Up",
+  "signup_title": "Sign up",
   "signup_intro": "This is a password manager based on trusted people. First, create an account or log in.",
   "email": "Email",
-  "username": "Username", 
+  "username": "Username",
   "password": "Password",
-  "confirm_password": "Confirm Password",
+  "confirm_password": "Confirm password",
   "email_hint": "Enter your email address.",
   "username_hint": "Enter your username.",
   "password_hint": "Your password must be at least 8 characters long.",
   "confirm_hint": "Repeat the password for confirmation.",
-  "login": "Log In",
-  "signup": "No account? Sign up!",
-  "signup_button": "Sign Up",
-  "signup_action": "Create Account",
+  "login": "Log in",
+  "signup": "No account yet? Sign up!",
+  "signup_button": "Sign up",
   "login_redirect": "Already have an account? Log in!",
+  "signup_action": "Create account",
   "signup_loading": "Signing up...",
   "back_to_login": "Already have an account? Log in",
-  "home": {
-    "passwords": "Passwords",
-    "trusted": "Trusted People",
-    "search_placeholder": "Search...",
-    "add_password": "Add Password",
-    "add_person": "Add Person",
-    "personal_accounts": "Personal Accounts",
-    "professional_accounts": "Professional Accounts",
-    "no_results": "No results"
-  },
-  "footer": {
-    "passwords": "Passwords",
-    "trusted": "Trusted"
-  },
   "errors": {
-    "email_required": "Please enter an email address.",
+    "email_required": "Please enter an email.",
     "email_invalid": "Invalid email address.",
     "username_required": "Please enter a username.",
     "username_invalid": "Invalid username.",
     "password_required": "Please enter a password.",
     "password_length": "Password must be at least 8 characters long.",
     "password_mismatch": "Passwords do not match."
+  },
+  "home": {
+    "passwords": "Passwords",
+    "trusted": "Trusted People",
+    "search_placeholder": "Search...",
+    "add_password": "Add password",
+    "add_trusted": "Add trusted person",
+    "personal_accounts": "Personal accounts",
+    "professional_accounts": "Professional accounts",
+    "no_results": "No results",
+    "loading": "Loading...",
+    "no_trusted_found": "No trusted contacts found.",
+    "error_loading_trusted": "Failed to load trusted contacts.",
+    "login_required": "Please log in to view trusted contacts."
+  },
+  "footer": {
+    "passwords": "Passwords",
+    "trusted": "Trusted"
   }
 }
