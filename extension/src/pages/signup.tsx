@@ -13,7 +13,7 @@ function Signup() {
     const [lang, set_lang] = useState<LocaleKey>("fr");
     const [show_password, set_show_password] = useState(false);
     const [show_confirm, set_show_confirm] = useState(false);
-    const [errors, set_errors] = useState<{ email?: string; password?: string; confirm?: string; general?: string }>({});
+    const [errors, set_errors] = useState<{ username?: string; email?: string; password?: string; confirm?: string; general?: string }>({});
     const [is_loading, set_is_loading] = useState(false);
     const navigate = useNavigate();
 
@@ -50,9 +50,14 @@ function Signup() {
         const form = e.target as HTMLFormElement;
         const newErrors: typeof errors = {};
 
+        const username = form.formUsername.value.trim();
         const email = form.formEmail.value.trim();
         const password = form.formPassword.value.trim();
         const confirm = form.formConfirm.value.trim();
+
+        // Validate username
+        if (!username) newErrors.username = t.errors.username_required;
+        else if (username.length < 3) newErrors.username = t.errors.username_invalid;
 
         // Validate email
         if (!email) newErrors.email = t.errors.email_required;
@@ -76,8 +81,7 @@ function Signup() {
         set_is_loading(true);
 
         try {
-            // Use email as username for signup (you might want to adjust this based on your backend requirements)
-            const result = await authService.signup(email, password);
+            const result = await authService.signup(username, email, password);
             
             if (result instanceof UserModel) {
                 // Signup successful, navigate to home
@@ -105,6 +109,8 @@ function Signup() {
             )}
 
             <Form noValidate onSubmit={handle_submit}>
+                <InputText id="formUsername" label={t.username} hint={t.username_hint} error={errors.username} />
+
                 <InputText id="formEmail" label={t.email} hint={t.email_hint} error={errors.email} />
 
                 <InputPassword
