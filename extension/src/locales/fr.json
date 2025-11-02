@@ -108,6 +108,7 @@
     "guardian_keys_different": "Les deux clés guardian doivent être différentes.",
     "recovery_failed": "La récupération a échoué. Vérifiez vos clés et réessayez.",
     "title_username_password_required": "Le titre, le nom d'utilisateur et le mot de passe sont requis.",
+    "title_required": "Le titre est requis.",
     "email_required_trusted": "Le courriel est requis.",
     "email_invalid_trusted": "Veuillez entrer une adresse courriel valide."
   },

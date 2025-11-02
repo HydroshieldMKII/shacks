@@ -108,6 +108,7 @@
     "guardian_keys_different": "Both guardian keys must be different.",
     "recovery_failed": "Recovery failed. Check your keys and try again.",
     "title_username_password_required": "Title, username, and password are required.",
+    "title_required": "Title is required.",
     "email_required_trusted": "Email is required.",
     "email_invalid_trusted": "Please enter a valid email address."
   },

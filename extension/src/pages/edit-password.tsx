@@ -26,6 +26,13 @@ export function EditPasswordPage() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [existingFolders, setExistingFolders] = useState<FolderModel[]>([]);
+    
+    // Field-specific errors
+    const [fieldErrors, setFieldErrors] = useState<{
+        title?: string;
+        username?: string;
+        password?: string;
+    }>({});
 
     // Load existing folders and password data
     useEffect(() => {
@@ -102,14 +109,53 @@ export function EditPasswordPage() {
         }
     };
 
+    const validateFields = () => {
+        const errors: { title?: string; username?: string; password?: string } = {};
+        
+        if (!title.trim()) {
+            errors.title = t.errors.title_required;
+        }
+        if (!username.trim()) {
+            errors.username = t.errors.username_required;
+        }
+        if (!password.trim()) {
+            errors.password = t.errors.password_required;
+        }
+        
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    // Clear field error when user starts typing
+    const handleTitleChange = (value: string) => {
+        setTitle(value);
+        if (fieldErrors.title) {
+            setFieldErrors(prev => ({ ...prev, title: undefined }));
+        }
+    };
+
+    const handleUsernameChange = (value: string) => {
+        setUsername(value);
+        if (fieldErrors.username) {
+            setFieldErrors(prev => ({ ...prev, username: undefined }));
+        }
+    };
+
+    const handlePasswordChange = (value: string) => {
+        setPassword(value);
+        if (fieldErrors.password) {
+            setFieldErrors(prev => ({ ...prev, password: undefined }));
+        }
+    };
+
     const handleSave = async () => {
-        if (!id || !title || !username || !password) {
-            setError("All required fields must be filled");
+        if (!id || !validateFields()) {
             return;
         }
 
         setSaving(true);
         setError(null);
+        setFieldErrors({});
 
         try {
             // Get or create folder ID from folder name

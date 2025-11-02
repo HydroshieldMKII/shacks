@@ -22,6 +22,13 @@ export function AddPasswordPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [existingFolders, setExistingFolders] = useState<FolderModel[]>([]);
+    
+    // Field-specific errors
+    const [fieldErrors, setFieldErrors] = useState<{
+        title?: string;
+        username?: string;
+        password?: string;
+    }>({});
 
     // Load existing folders on component mount
     useEffect(() => {
@@ -70,14 +77,53 @@ export function AddPasswordPage() {
         }
     };
 
+    const validateFields = () => {
+        const errors: { title?: string; username?: string; password?: string } = {};
+        
+        if (!title.trim()) {
+            errors.title = t.errors.title_required;
+        }
+        if (!username.trim()) {
+            errors.username = t.errors.username_required;
+        }
+        if (!password.trim()) {
+            errors.password = t.errors.password_required;
+        }
+        
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    // Clear field error when user starts typing
+    const handleTitleChange = (value: string) => {
+        setTitle(value);
+        if (fieldErrors.title) {
+            setFieldErrors(prev => ({ ...prev, title: undefined }));
+        }
+    };
+
+    const handleUsernameChange = (value: string) => {
+        setUsername(value);
+        if (fieldErrors.username) {
+            setFieldErrors(prev => ({ ...prev, username: undefined }));
+        }
+    };
+
+    const handlePasswordChange = (value: string) => {
+        setPassword(value);
+        if (fieldErrors.password) {
+            setFieldErrors(prev => ({ ...prev, password: undefined }));
+        }
+    };
+
     const handleSubmit = async () => {
-        if (!title || !username || !password) {
-            setError(t.errors.title_username_password_required);
+        if (!validateFields()) {
             return;
         }
 
         setLoading(true);
         setError(null);
+        setFieldErrors({});
 
         try {
             // Get or create folder ID from folder name
@@ -123,8 +169,10 @@ export function AddPasswordPage() {
                 <EditFormField 
                     label={t.password_title} 
                     value={title} 
-                    onChange={setTitle}
+                    onChange={handleTitleChange}
                     placeholder="e.g., YouTube Account"
+                    error={fieldErrors.title}
+                    required
                 />
             </div>
             
@@ -141,18 +189,22 @@ export function AddPasswordPage() {
                 <EditFormField 
                     label={t.username_email} 
                     value={username} 
-                    onChange={setUsername}
+                    onChange={handleUsernameChange}
                     placeholder="e.g., john.doe@email.com"
+                    error={fieldErrors.username}
+                    required
                 />
             </div>
             
             <div className="mb-3">
-                                <EditFormField 
+                <EditFormField 
                     label={t.password} 
                     type="password" 
                     value={password} 
-                    onChange={setPassword}
+                    onChange={handlePasswordChange}
                     placeholder="Enter password"
+                    error={fieldErrors.password}
+                    required
                 />
             </div>
 
