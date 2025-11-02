@@ -23,7 +23,9 @@
     "trusted": "Personnes de confiance",
     "search_placeholder": "Rechercher...",
     "add_password": "Ajouter un mot de passe",
-    "add_person": "Ajouter une personne",
+    "edit_password": "Modifier un mot de passe",
+    "add_person": "Ajouter une personne de confiance",
+    "edit_person": "Modifier une personne de confiance",
     "personal_accounts": "Comptes personnels",
     "professional_accounts": "Comptes professionnels",
     "no_results": "Aucun résultat"
@@ -32,10 +34,32 @@
     "passwords": "Mots de passe",
     "trusted": "Confiance"
   },
+  "delete_modal": {
+    "title": "ATTENTION",
+    "warning_password": "Vous êtes sur le point de supprimer votre sauvegarde de mot de passe pour « {{item}} ».",
+    "warning_trusted": "Vous êtes sur le point de supprimer votre personne de confiance « {{item}} ».",
+    "confirm": "Supprimer",
+    "cancel": "Annuler",
+    "question": "Voulez-vous vraiment le supprimer ?"
+  },
+  "trusted": {
+    "add_title": "Ajouter une personne de confiance",
+    "add_subtitle": "Choisissez une personne de confiance pour réinitialiser votre compte en cas d’oubli.",
+    "edit_title": "Modifier une personne de confiance",
+    "edit_subtitle": "Modifiez les informations de votre personne de confiance."
+  },
+  "passwords": {
+    "add_title": "Ajouter un mot de passe",
+    "add_subtitle": "Ajoutez un mot de passe du site de votre choix.",
+    "edit_title": "Modifier un mot de passe",
+    "edit_subtitle": "Modifiez les informations de votre mot de passe enregistré."
+  },
+  "note_label": "Note (optionnel)",
+  "note_hint": "Ajoutez un commentaire ou une précision si nécessaire.",
   "errors": {
     "email_required": "Veuillez entrer un courriel.",
     "email_invalid": "Adresse courriel invalide.",
-    "username_required": "Veuillez entrer un nom d'utilisateur.", 
+    "username_required": "Veuillez entrer un nom d'utilisateur.",
     "username_invalid": "Nom d'utilisateur invalide.",
     "password_required": "Veuillez entrer un mot de passe.",
     "password_length": "Le mot de passe doit contenir au moins 8 caractères.",
