@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { locales, type LocaleKey } from "../locales";
 import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";
 import { PasswordSection } from "../components/sections/PasswordSection";
 import { TrustedSection } from "../components/sections/TrustedSection";
+import authService from "../services/authService";
 
 function Home() {
     const [lang, setLang] = useState<LocaleKey>("fr");
     const [tab, setTab] = useState<"passwords" | "trusted">("passwords");
+    const navigate = useNavigate();
 
     // ✅ Langue persistée dans localStorage
     useEffect(() => {
@@ -27,6 +30,17 @@ function Home() {
         localStorage.setItem("trust_lang", newLang);
     };
 
+    const handleLogout = async () => {
+        try {
+            await authService.logout();
+            navigate('/');
+        } catch (error) {
+            console.error('Logout failed:', error);
+            // Même en cas d'erreur, rediriger vers la page de connexion
+            navigate('/');
+        }
+    };
+
     const t = locales[lang];
 
     return (
@@ -44,6 +58,7 @@ function Home() {
                 appName={t.app_name}
                 lang={lang}
                 onLangToggle={toggleLang}
+                onLogout={handleLogout}
             />
 
             {/* ✅ plus de padding haut et bas */}
