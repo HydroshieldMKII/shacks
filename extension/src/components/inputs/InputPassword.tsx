@@ -8,6 +8,8 @@ interface InputPasswordProps {
     error?: string;
     showPassword: boolean;
     setShowPassword: (value: boolean) => void;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function InputPassword({
@@ -17,6 +19,8 @@ export function InputPassword({
                                   error,
                                   showPassword,
                                   setShowPassword,
+                                  value,
+                                  onChange,
                               }: InputPasswordProps) {
     return (
         <Form.Group className="mb-3" controlId={id}>
@@ -25,6 +29,8 @@ export function InputPassword({
                 <Form.Control
                     type={showPassword ? "text" : "password"}
                     className={`bg-dark text-light border-secondary rounded-start-3 ${error ? "is-invalid" : ""}`}
+                    value={value}
+                    onChange={onChange}
                 />
                 <Button
                     variant="outline-secondary"
