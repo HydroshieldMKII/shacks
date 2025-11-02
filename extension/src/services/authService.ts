@@ -16,7 +16,10 @@ class AuthService {
     }
 
     async logout(): Promise<ApiResponseModel> {
-        return apiService.postRequest('users/logout');
+        const response = await apiService.postRequest('users/logout');
+        // Clear session cookies after logout
+        await apiService.clearSession();
+        return response;
     }
 
     async signup(username: string, password: string): Promise<UserModel | ApiResponseModel> {
@@ -35,6 +38,11 @@ class AuthService {
         } else {
             return response;
         }
+    }
+
+    async isAuthenticated(): Promise<boolean> {
+        const sessionCookie = await apiService.getSessionCookie();
+        return sessionCookie !== null;
     }
 }
 
